@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Greed</title>
+    <style>
+      h1 {
+        text-align: center;
+      }
+      .player-name {
+        text-align: center;
+      }
+      .dice-container {
+        width: 900px;
+        margin: 0 auto;
+        font-size: 0;
+      }
+      .dice {
+        display: inline-block;
+        width: 150px;
+        font-size: 16px;
+        text-align: center;
+        height: 60px;
+        vertical-align: middle;
+        line-height: 60px;
+      }
+      .totals {
+        width: 900px;
+        position: relative;
+        left: 0;
+        right: 0;
+      }
+      .total {
+        position: absolute;
+        left: 0;
+      }
+      .running-total {
+        position: absolute;
+        right: 0;
+      }
+      .buttons {
+        margin-top: 40px;
+        text-align: center;
+      }
+      table {
+        text-align: center;
+        width: 900px;
+        margin: 0 auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Greed</h1>
+
+    <div class="template-container"></div>
+
+
+
+
+<script id="game-template" type="text/x-handlebars-template">
+  <div class="player-name">{{playerName}}</div>
+
+  <div class="dice-container">
+    <div class="dice">2</div>
+    <div class="dice">2</div>
+    <div class="dice">2</div>
+    <div class="dice">2</div>
+    <div class="dice">2</div>
+    <div class="dice">2</div>
+  </div>
+
+  <div class="totals">
+    <span class="total">{{total}}</span>
+    <span class="running-total">{{runningTotal}}</span>
+  </div>
+
+  <div class="buttons">
+    <button class="roll" {{disabled}}>Roll</button>
+    <button class="endGo" {{disabled}}>End Go</button>
+  </div>
+
+  <table class="score-table">
+    <thead>
+      {{{thead}}}
+    </thead>
+    <tr>
+      {{{trTotal}}}
+    </tr>
+  </table>
+</script>
+<script id="registering-template" type="text/x-handlebars-template">
+  <div class='container'>
+    <div class='registering'>Game registering</div>
+
+    <div class="inputs">
+      <label for="name">Name: </label>
+      <input type="text" id="name">
+    </div>
+
+    <div class="button-wrapper">
+      <button class='join'>Join Game</button>
+    </div>
+  </div>
+</script>
+<script id="create-game-template" type="text/x-handlebars-template">
+  <div class='container'>
+    <div class='create-game'>Create Game</div>
+
+    <div class="inputs">
+      <label for="players">Number of Players: </label>
+      <input type="text" id="players">
+    </div>
+
+    <div class="button-wrapper">
+      <button class='create-button'>Create new game</button>
+    </div>
+  </div>
+</script>
+<script id="message-template" type="text/x-handlebars-template">
+  <div class='container'>
+    <div class='in-progress'>{{message}}</div>
+  </div>
+</script>
+
+<script src="/lib/jquery.js"></script>
+<script src="/lib/handlebars-v4.0.5.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var name;
+
+  function createGuid() {
+    'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = crypto.getRandomValues(new Uint8Array(1))[0]%16|0, v = c == 'x' ? r : (r&0x3|0x8);
+      return v.toString(16);
+    });
+  }
+
+  var socket = io.connect("/",{
+    "connect timeout": 3000,
+    "reconnect": false
+  });
+
+  socket.emit("getStatus");
+
+  socket.on("statusUpdate", function(status, game) {
+    var template;
+
+    switch (status) {
+      case "createGame":
+        var source   = $("#create-game-template").html();
+        template = Handlebars.compile(source);
+        break;
+      case "registering": 
+        var source = $("#registering-template").html();
+        template = Handlebars.compile(source);
+        break;
+      case "registered": 
+        var source   = $("#message-template").html();
+        template = Handlebars.compile(source);
+        var context =  { message: "Waiting for players. Please wait."};
+        template = template(context);
+        break;
+      case "inprogress": 
+        var source   = $("#message-template").html();
+        template = Handlebars.compile(source);
+        var context =  { message: "Game in progress. Please wait"};
+        template = template(context);
+        break;
+      case "startGame":
+        var source = $("#game-template").html();
+        template = Handlebars.compile(source);
+
+        var thead = '<th>Round</th>',
+          trTotal = '<td>Total</td>';
+
+        game.players.forEach(function(player) {
+          thead += '<th>' + player.name + '</th>';
+          trTotal += '<td>0</td>';
+        });
+
+        var context = {
+          playerName: game.players[0].name,
+          total: 0,
+          runningTotal: 0,
+          thead: thead,
+          trTotal: trTotal,
+          disabled: game.players[0].name === name ? '' : 'disabled'
+        }
+        template = template(context);
+        break;
+    }
+    $('.template-container').html(template);
+    setClickHandlers();
+  });
+
+  socket.on("rolled", rolled);
+
+  function rolled(dice) {
+    var d = dice;
+  }
+
+  function setClickHandlers() {
+    $('.create-button').on('click', function() {
+      socket.emit("createGame", parseInt($('#players').val(), 10));
+    });
+
+    $('.join').on('click', function() {
+      name = $('#name').val();
+      var data = {
+        name: $('#name').val(),
+        id: createGuid()
+      }
+      socket.emit("register", data);
+    });
+
+    $('.roll').on('click', function() {
+      socket.emit("roll");
+    });
+  }
+
+</script>
+</body>
+</html>

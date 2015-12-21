@@ -1,0 +1,12 @@
+{
+  "name": "Greed",
+  "version": "1.0.0",
+  "description": "An web-based implementation of the Greed dice game.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "James Grimsdale",
+  "license": "ISC"
+}
