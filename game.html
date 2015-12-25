@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Greed</title>
+    <link href="./css/dice.css" rel="stylesheet">
     <style>
       h1 {
         text-align: center;
@@ -10,7 +11,7 @@
         text-align: center;
       }
       .dice-container {
-        width: 900px;
+        width: 372px;
         margin: 0 auto;
         font-size: 0;
       }
@@ -22,6 +23,7 @@
         height: 60px;
         vertical-align: middle;
         line-height: 60px;
+        margin-left: 30px;
       }
       .totals {
         width: 900px;
@@ -60,13 +62,16 @@
   <div class="player-name">{{playerName}}</div>
 
   <div class="dice-container">
-    <div class="dice">2</div>
-    <div class="dice">2</div>
-    <div class="dice">2</div>
-    <div class="dice">2</div>
-    <div class="dice">2</div>
-    <div class="dice">2</div>
+    <div id="dice1" class="dice class1"></div>
+    <div id="dice2" class="dice class1"></div>
+    <div id="dice3" class="dice class1"></div>
+    <div id="dice4" class="dice class1"></div>
+    <div id="dice5" class="dice class1"></div>
+    <div id="dice6" class="dice class1"></div>
   </div>
+
+  <div class="win"></div>
+  <div class="score"></div>
 
   <div class="totals">
     <span class="total">{{total}}</span>
@@ -124,6 +129,7 @@
 <script src="/lib/jquery.js"></script>
 <script src="/lib/handlebars-v4.0.5.js"></script>
 <script src="/socket.io/socket.io.js"></script>
+<script src="/clientjs/animate.js"></script>
 <script>
   var name;
 
@@ -195,7 +201,32 @@
   socket.on("rolled", rolled);
 
   function rolled(dice) {
-    var d = dice;
+    var diceScores = [];
+    dice.forEach(function(die) {
+      diceScores.push(die.value);
+    });
+    animate.rollAllDice(diceScores);
+
+    showWin(dice);
+  }
+
+  function showWin(dice) {
+    var strWin = "";
+    var strScore = "";
+    dice.forEach(function(die, i) {
+      if (die.win && (strWin.indexOf(die.win) === -1 || die.win === "1" || die.win === "5")) {
+        strWin += " " + die.win;
+        strScore += " " + die.score;      
+      }
+      var diceNumber = i + 1;
+      if (die.win) {
+        $('#dice' + diceNumber).css('opacity', 0.5);
+      } else {
+        $('#dice' + diceNumber).css('opacity', '');
+      }
+    });
+    $('.win').text(strWin);
+    $('.score').text(strScore);
   }
 
   function setClickHandlers() {

@@ -1,0 +1,87 @@
+#dice1, #dice2, #dice3, #dice4, #dice5, #dice6 {
+  width: 32px;
+  height: 32px;
+  background-repeat: no-repeat;
+}
+.class1 {
+  background-image: url("../images/dices-1.gif");
+  width: 32px;
+  height: 32px;
+}
+.class2 {
+  background-image: url("../images/dices-2.gif");
+  width: 32px;
+  height: 32px;
+}
+.class3 {
+  background-image: url("../images/dices-3.gif");
+  width: 32px;
+  height: 32px;
+}
+.class4 {
+  background-image: url("../images/dices-4.gif");
+  width: 32px;
+  height: 32px;
+}
+.class5 {
+  background-image: url("../images/dices-5.gif");
+  width: 32px;
+  height: 32px;
+}
+.class6 {
+  background-image: url("../images/dices-6.gif");
+  width: 32px;
+  height: 32px;
+}
+.class7 {
+  background-image: url("../images/dicet-1.gif");
+  width: 32px;
+  height: 32px;
+}
+.class8 {
+  background-image: url("../images/dicet-2.gif");
+  width: 32px;
+  height: 32px;
+}
+.class9 {
+  background-image: url("../images/dicet-3.gif");
+  width: 32px;
+  height: 32px;
+}
+.class10 {
+  background-image: url("../images/dicet-4.gif");
+  width: 32px;
+  height: 32px;
+}
+.class11 {
+  background-image: url("../images/dicet-5.gif");
+  width: 32px;
+  height: 32px;
+}
+.class12 {
+  background-image: url("../images/dicet-6.gif");
+  width: 32px;
+  height: 32px;
+}
+.class13 {
+  background-image: url("../images/die-1.gif");
+  width: 32px;
+  height: 32px;
+}
+.class14 {
+  background-image: url("../images/die-2.gif");
+  width: 32px;
+  height: 32px;
+}
+.class15 {
+  background-image: url("../images/die-3.gif");
+}
+.class16 {
+  background-image: url("../images/die-4.gif");
+}
+.class17 {
+  background-image: url("../images/die-5.gif");
+}
+.class18 {
+  background-image: url("../images/die-6.gif");
+}
