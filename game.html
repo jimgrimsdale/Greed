@@ -45,8 +45,10 @@
       }
       table {
         text-align: center;
-        width: 900px;
         margin: 0 auto;
+      }
+      table th {
+        padding: 0 30px;
       }
     </style>
   </head>
@@ -87,6 +89,9 @@
     <thead>
       {{{thead}}}
     </thead>
+    <tr>
+      {{{trRound1}}}
+    </tr>
     <tr>
       {{{trTotal}}}
     </tr>
@@ -132,6 +137,7 @@
 <script src="/clientjs/animate.js"></script>
 <script>
   var name;
+  var playerNumber = 1;
 
   function createGuid() {
     'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -176,18 +182,21 @@
         template = Handlebars.compile(source);
 
         var thead = '<th>Round</th>',
+          trRound1 = '<td>1</td>',
           trTotal = '<td>Total</td>';
 
         game.players.forEach(function(player) {
           thead += '<th>' + player.name + '</th>';
+          trRound1 += '<td></td>';
           trTotal += '<td>0</td>';
         });
 
         var context = {
-          playerName: game.players[0].name,
+          playerName: getPlayerNameText(game.players[0].name),
           total: 0,
           runningTotal: 0,
           thead: thead,
+          trRound1: trRound1,
           trTotal: trTotal,
           disabled: game.players[0].name === name ? '' : 'disabled'
         }
@@ -198,14 +207,17 @@
     setClickHandlers();
   });
 
+  function getPlayerNameText(currentPlayerName) {
+    if (currentPlayerName === name) {
+      return 'Your turn';
+    }
+    return currentPlayerName + "'s turn";
+  }
+
   socket.on("rolled", rolled);
 
   function rolled(diceData) {
-    // var diceScores = [];
-    // diceData.dice.forEach(function(die) {
-    //   diceScores.push(die.value);
-    // });
-    // animate.rollAllDice(diceScores);
+    setPlayedDiceOpacity();
 
     $.when(animate.rollJustRolledDice(diceData.dice)).then(
       function() {
@@ -255,6 +267,56 @@
     }
   }
 
+  function resetDiceCss() {
+    for(var i = 1; i < 7; i++) {
+      var $dice = $('#dice' + i);
+      $dice.css('-webkit-filter', '');
+      $dice.css('opacity', '');
+    }
+  }
+
+  socket.on("nextPlayersTurn", nextPlayersTurn);
+
+  function nextPlayersTurn(data) {
+    updateScoreTable(data.prevPlayerNumber);
+
+    var playerNameText = getPlayerNameText(data.name);
+
+    $('.player-name').text(playerNameText);
+    if (name === data.name) {
+      enableButtons();
+    } else {
+      disableButtons();
+    }
+
+    $('.totalTurnScore').text(0);
+    $('.rollScore').text(0);
+    $('.win').text('');
+    $('.score').text('');
+
+    resetDiceCss();
+  }
+
+  function updateScoreTable(playerNumber) {
+    var $tableRow = $('table tr:last').prev();
+    var columnNumber = playerNumber + 1;
+    var $cell = $tableRow.find('td:nth-child(' + columnNumber  + ')');
+    var totalTurnScore = $('.totalTurnScore').text();
+    $cell.text(totalTurnScore);
+  }
+
+  function enableButtons() {
+    $('button').each(function() {
+      $(this).prop("disabled", false)
+    });
+  }
+
+  function disableButtons() {
+    $('button').each(function() {
+      $(this).prop("disabled", true)
+    });
+  }
+
   function setClickHandlers() {
     $('.create-button').on('click', function() {
       socket.emit("createGame", parseInt($('#players').val(), 10));
@@ -270,13 +332,16 @@
     });
 
     $('.roll').on('click', function() {
-      setPlayedDiceOpacity();
       socket.emit("roll");
     });
 
     $('.restartGame').on('click', function() {
       socket.emit('restartGame');
       location.reload();
+    });
+
+    $('.endGo').on('click', function() {
+      socket.emit("endGo");
     });
   }
 
