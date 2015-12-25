@@ -39,30 +39,43 @@ function handleHTTP(req,res) {
 var game; 
 var dice = [
   {
+    elementId: '#dice1',
     value: 0,
-    inPlay: true
+    inPlay: true,
+    justRolled: false
   },
   {
+    elementId: '#dice2',
     value: 0,
-    inPlay: true
+    inPlay: true,
+    justRolled: false
   },
   {
+    elementId: '#dice3',
     value: 0,
-    inPlay: true
+    inPlay: true,
+    justRolled: false
   },
   {
+    elementId: '#dice4',
     value: 0,
-    inPlay: true
+    inPlay: true,
+    justRolled: false
   },
   {
+    elementId: '#dice5',
     value: 0,
-    inPlay: true
+    inPlay: true,
+    justRolled: false
   },
   {
+    elementId: '#dice6',
     value: 0,
-    inPlay: true
+    inPlay: true,
+    justRolled: false
   }
 ];
+var totalTurnScore = 0;
 
 function connection(socket) {
   function disconnect() {
@@ -95,6 +108,16 @@ function connection(socket) {
     }
   }
 
+  function restartGame() {
+    game = undefined;
+    dice.forEach(function(die) {
+      die.inPlay = true;
+      die.win = undefined;
+      die.score = undefined;
+    });
+    getStatus();
+  }
+
   function createGame(numberOfPlayers) {
     game = {
       numberOfPlayers: numberOfPlayers,
@@ -114,12 +137,21 @@ function connection(socket) {
   }
 
   function roll() {
-    resetDice(); //to remove
-
+    // resetDice();
+    diceRoller.resetJustRolled(dice);
+    diceRoller.checkAllNotInPlay(dice);
     diceRoller.rollDiceInPlay(dice);
-    diceRoller.calculateScore(dice);
+    scoreCalculator.calculateScoresForEachDice(dice);
+    var turnScore = scoreCalculator.calculateTurnScore(dice);
+    totalTurnScore += turnScore;
 
-    socket.emit("rolled", dice);
+    var diceData = {
+      dice: dice,
+      turnScore: turnScore,
+      totalTurnScore: totalTurnScore
+    };
+
+    socket.emit("rolled", diceData);
   }
 
   socket.on("disconnect", disconnect);
@@ -127,17 +159,21 @@ function connection(socket) {
   socket.on("createGame", createGame);
   socket.on("register", register);
   socket.on("roll", roll);
+  socket.on("restartGame", restartGame);
 }
 
 function resetDice() {
   dice.forEach(function(die) {
+    die.value = 0;
+    die.inPlay = true;
+    die.justRolled = false;
     die.win = undefined;
     die.score = undefined;
   });
 }
 
-var diceRoller = require('./diceRoller.js');
-console.log(diceRoller);
+var diceRoller = require('./greed_node_modules/diceRoller.js');
+var scoreCalculator = require('./greed_node_modules/scoreCalculator.js');
 
 var http = require("http"),
   httpserv = http.createServer(handleHTTP),

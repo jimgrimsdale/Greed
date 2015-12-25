@@ -55,9 +55,6 @@
 
     <div class="template-container"></div>
 
-
-
-
 <script id="game-template" type="text/x-handlebars-template">
   <div class="player-name">{{playerName}}</div>
 
@@ -70,8 +67,10 @@
     <div id="dice6" class="dice class1"></div>
   </div>
 
-  <div class="win"></div>
-  <div class="score"></div>
+  <div>Winning combos: <span class="win"></span></div>
+  <div>Winning scores: <span class="score"></span></div>
+  <div>Roll Score: <span class="rollScore"></span></div>
+  <div>Total Score: <span class="totalTurnScore">0</span></div>
 
   <div class="totals">
     <span class="total">{{total}}</span>
@@ -81,6 +80,7 @@
   <div class="buttons">
     <button class="roll" {{disabled}}>Roll</button>
     <button class="endGo" {{disabled}}>End Go</button>
+    <button class="restartGame" {{disabled}}>Restart Game</button>
   </div>
 
   <table class="score-table">
@@ -200,33 +200,59 @@
 
   socket.on("rolled", rolled);
 
-  function rolled(dice) {
-    var diceScores = [];
-    dice.forEach(function(die) {
-      diceScores.push(die.value);
-    });
-    animate.rollAllDice(diceScores);
+  function rolled(diceData) {
+    // var diceScores = [];
+    // diceData.dice.forEach(function(die) {
+    //   diceScores.push(die.value);
+    // });
+    // animate.rollAllDice(diceScores);
 
-    showWin(dice);
+    $.when(animate.rollJustRolledDice(diceData.dice)).then(
+      function() {
+        showWin(diceData.dice);
+        $('.rollScore').text(diceData.turnScore);
+        $('.totalTurnScore').text(diceData.totalTurnScore);    
+      });
   }
 
   function showWin(dice) {
     var strWin = "";
     var strScore = "";
     dice.forEach(function(die, i) {
-      if (die.win && (strWin.indexOf(die.win) === -1 || die.win === "1" || die.win === "5")) {
+      if (die.win && die.justRolled && (strWin.indexOf(die.win) === -1 || die.win === "1" || die.win === "5")) {
         strWin += " " + die.win;
         strScore += " " + die.score;      
       }
       var diceNumber = i + 1;
       if (die.win) {
-        $('#dice' + diceNumber).css('opacity', 0.5);
+        $('#dice' + diceNumber).css('-webkit-filter', 'sepia(1)');
       } else {
-        $('#dice' + diceNumber).css('opacity', '');
+        $('#dice' + diceNumber).css('-webkit-filter', '');
       }
     });
     $('.win').text(strWin);
     $('.score').text(strScore);
+  }
+
+  function setPlayedDiceOpacity() {
+    var count = 0;
+    for(var i = 1; i < 7; i++) {
+      var $dice = $('#dice' + i);
+      if ($dice.css('opacity') === 0.5) {
+        count++;
+      }
+      if ($dice.css('-webkit-filter') === "sepia(1)") {
+        $dice.css('-webkit-filter', '');
+        $dice.css('opacity', 0.5);
+        count++;
+      }
+    }
+    if (count === 6) {
+      for(var i = 1; i < 7; i++) {
+        var $dice = $('#dice' + i);
+        $dice.css('opacity', '');
+      }
+    }
   }
 
   function setClickHandlers() {
@@ -244,7 +270,13 @@
     });
 
     $('.roll').on('click', function() {
+      setPlayedDiceOpacity();
       socket.emit("roll");
+    });
+
+    $('.restartGame').on('click', function() {
+      socket.emit('restartGame');
+      location.reload();
     });
   }
 
