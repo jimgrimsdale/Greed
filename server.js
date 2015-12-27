@@ -39,6 +39,12 @@ function handleHTTP(req,res) {
 var game; 
 var dice = [
   {
+    elementId: '#dice0',
+    value: 0,
+    inPlay: true,
+    justRolled: false
+  },
+  {
     elementId: '#dice1',
     value: 0,
     inPlay: true,
@@ -64,12 +70,6 @@ var dice = [
   },
   {
     elementId: '#dice5',
-    value: 0,
-    inPlay: true,
-    justRolled: false
-  },
-  {
-    elementId: '#dice6',
     value: 0,
     inPlay: true,
     justRolled: false
@@ -152,7 +152,7 @@ function connection(socket) {
 
   function roll() {
     // resetDice();
-    diceRoller.resetJustRolled(dice);
+    diceRoller.resetJustRolledAndDeselected(dice);
     diceRoller.checkAllNotInPlay(dice);
     diceRoller.rollDiceInPlay(dice);
     scoreCalculator.calculateScoresForEachDice(dice);
@@ -167,6 +167,33 @@ function connection(socket) {
     };
 
     io.sockets.emit("rolled", diceData);
+  }
+
+  function updateScores(diceNumber, oldTurnScore, selected) {
+    var die = dice[diceNumber];
+    die.deselected = selected ? undefined : true;
+    die.inPlay = true;
+    resetWins();
+    scoreCalculator.calculateScoresForEachDice(dice);
+    var turnScore = scoreCalculator.calculateTurnScore(dice);
+
+    currentPlayer.totalTurnScore = currentPlayer.totalTurnScore - oldTurnScore + turnScore; 
+
+    var diceData = {
+      dice: dice,
+      turnScore: turnScore,
+      totalTurnScore: currentPlayer.totalTurnScore,
+      currentPlayerName: currentPlayer.name
+    };
+
+    io.sockets.emit("updatedScores", diceData);
+  }
+
+  function resetWins() {
+    dice.forEach(function(die) {
+      die.win = undefined;
+      die.score = undefined;
+    });
   }
 
   function endGo() {
@@ -233,6 +260,7 @@ function connection(socket) {
   socket.on("createGame", createGame);
   socket.on("register", register);
   socket.on("roll", roll);
+  socket.on("updateScores", updateScores);
   socket.on("restartGame", restartGame);
   socket.on("endGo", endGo);
 

@@ -64,12 +64,12 @@
   <div class="player-name">{{playerName}}</div>
 
   <div class="dice-container">
+    <div id="dice0" class="dice class1"></div>
     <div id="dice1" class="dice class1"></div>
     <div id="dice2" class="dice class1"></div>
     <div id="dice3" class="dice class1"></div>
     <div id="dice4" class="dice class1"></div>
     <div id="dice5" class="dice class1"></div>
-    <div id="dice6" class="dice class1"></div>
   </div>
 
   <div>Winning combos: <span class="win"></span></div>
@@ -223,6 +223,7 @@
 
   function rolled(diceData) {
     setPlayedDiceOpacity();
+    removeClickHandlers();
 
     $.when(animate.rollJustRolledDice(diceData.dice)).then(
       function() {
@@ -253,11 +254,20 @@
         strWin += die.win + ", ";
         strScore += " " + die.score;      
       }
-      var diceNumber = i + 1;
+
+      if (die.deselected) {
+        $('#dice' + i).data('diceNumber', i);
+        $('#dice' + i).data('selected', true);
+        $('#dice' + i).on('click', updateScores);
+      }
+
       if (die.win) {
-        $('#dice' + diceNumber).css('-webkit-filter', 'sepia(1)');
+        $('#dice' + i).css('-webkit-filter', 'sepia(1)');
+        $('#dice' + i).data('diceNumber', i);
+        $('#dice' + i).data('selected', false);
+        $('#dice' + i).on('click', updateScores);
       } else {
-        $('#dice' + diceNumber).css('-webkit-filter', '');
+        $('#dice' + i).css('-webkit-filter', '');
       }
     });
     if (strWin !== "") {
@@ -267,9 +277,25 @@
     $('.score').text(strScore);
   }
 
+  function updateScores() {
+    var $dieEl = $(this);
+    var selected = $dieEl.data('selected');
+    var turnScore = parseInt($('.rollScore').text(), 10);
+    socket.emit('updateScores', $dieEl.data('diceNumber'), turnScore, selected);
+  }
+
+  socket.on('updatedScores', updatedScores);
+
+  function updatedScores(diceData) {
+    removeClickHandlers();
+    showWin(diceData.dice);
+    $('.rollScore').text(diceData.turnScore);
+    $('.totalTurnScore').text(diceData.totalTurnScore);
+  }
+
   function setPlayedDiceOpacity() {
     var count = 0;
-    for(var i = 1; i < 7; i++) {
+    for(var i = 0; i < 6; i++) {
       var $dice = $('#dice' + i);
       if ($dice.css('opacity') === 0.5) {
         count++;
@@ -281,15 +307,21 @@
       }
     }
     if (count === 6) {
-      for(var i = 1; i < 7; i++) {
+      for(var i = 0; i < 6; i++) {
         var $dice = $('#dice' + i);
         $dice.css('opacity', '');
       }
     }
   }
 
+  function removeClickHandlers() {
+    for(var i = 0; i < 6; i++) {
+      $('#dice' + i).off('click');
+    }
+  }
+
   function resetDiceCss() {
-    for(var i = 1; i < 7; i++) {
+    for(var i = 0; i < 6; i++) {
       var $dice = $('#dice' + i);
       $dice.css('-webkit-filter', '');
       $dice.css('opacity', '');

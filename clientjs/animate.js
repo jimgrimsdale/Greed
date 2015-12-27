@@ -13,12 +13,12 @@ var animate = (function() {
   };
 
   diceElementIdMap = {
-    0: '#dice1',
-    1: '#dice2',
-    2: '#dice3',
-    3: '#dice4',
-    4: '#dice5',
-    5: '#dice6',
+    0: '#dice0',
+    1: '#dice1',
+    2: '#dice2',
+    3: '#dice3',
+    4: '#dice4',
+    5: '#dice5',
   };
 
   function rollDice($dice, value) {
@@ -70,7 +70,7 @@ var animate = (function() {
         var $dice = $(die.elementId);
         var value = die.value;
 
-        $.when( rollDice($dice, value) ).then(
+        $.when(rollDice($dice, value)).then(
           function() {
             count++;
             if (count === numberJustRolled) {
