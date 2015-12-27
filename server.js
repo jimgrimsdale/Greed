@@ -103,7 +103,9 @@ function connection(socket) {
     if(!game) {
       game = {
         numberOfPlayers: 1,
-        players: []
+        players: [],
+        round: 1,
+        finalScoreLine: 500
       };
     }
   }
@@ -125,7 +127,9 @@ function connection(socket) {
   function createGame(numberOfPlayers) {
     game = {
       numberOfPlayers: numberOfPlayers,
-      players: []
+      players: [],
+      round: 1,
+      finalScoreLine: 500
     };
 
     io.sockets.emit("statusUpdate", "registering");
@@ -135,6 +139,7 @@ function connection(socket) {
     var playerNumber = game.players.length + 1;
     data.playerNumber = playerNumber;
     data.totalTurnScore = 0;
+    data.totalScore = 0;
 
     game.players.push(data);
     if (game.players.length === game.numberOfPlayers) {
@@ -152,21 +157,49 @@ function connection(socket) {
     diceRoller.rollDiceInPlay(dice);
     scoreCalculator.calculateScoresForEachDice(dice);
     var turnScore = scoreCalculator.calculateTurnScore(dice);
-    currentPlayer.totalTurnScore += turnScore;
+    currentPlayer.totalTurnScore = turnScore === 0 ? 0 : currentPlayer.totalTurnScore + turnScore;
 
     var diceData = {
       dice: dice,
       turnScore: turnScore,
-      totalTurnScore: currentPlayer.totalTurnScore
+      totalTurnScore: currentPlayer.totalTurnScore,
+      currentPlayerName: currentPlayer.name
     };
 
     io.sockets.emit("rolled", diceData);
   }
 
   function endGo() {
+    var gameEndTotalScore = 0,
+      winner;
     currentPlayer.totalScore += currentPlayer.totalTurnScore;
-    currentPlayer.totalTurnScore = 0;
+    if (game.finalRound && game.finalRoundTurnsLeft) {
+      game.finalRoundTurnsLeft--;
+      if(game.finalRoundTurnsLeft === 0) {
+        game.players.forEach(function(player) {
+          if (player.totalScore === gameEndTotalScore && player.name !== game.firstPastFinalScoreLine) {
+            winner += " and " + player.name;
+          }
+          if (player.totalScore === gameEndTotalScore && player.name === game.firstPastFinalScoreLine) {
+            winner = game.firstPastFinalScoreLine;
+          }
+          if (player.totalScore > gameEndTotalScore) {
+            gameEndTotalScore = player.totalScore;
+            winner = player.name;
+          }          
+        }); 
+      }
+    }
+    if (!game.finalRound && currentPlayer.totalScore >= game.finalScoreLine) {
+      game.finalRound = true;
+      game.finalRoundTurnsLeft = game.players.length - 1;
+      game.firstPastFinalScoreLine = currentPlayer.name;
+    }
+    var prevPlayerTotalTurnScore = currentPlayer.totalTurnScore;
+    var prevPlayerTotalScore = currentPlayer.totalScore;
     var prevPlayerNumber = currentPlayer.playerNumber;
+
+    currentPlayer.totalTurnScore = 0;
 
     if (currentPlayer.playerNumber === game.players.length) {
       currentPlayer = game.players[0];
@@ -176,9 +209,20 @@ function connection(socket) {
     
     resetDice();
 
-    var data = { 
+    var endOfRound = prevPlayerNumber === game.players.length;
+    if (endOfRound) {
+      game.round++;
+    }
+
+    var data = {
       name: currentPlayer.name,
-      prevPlayerNumber: prevPlayerNumber
+      prevPlayerNumber: prevPlayerNumber,
+      prevPlayerTotalTurnScore: prevPlayerTotalTurnScore,
+      prevPlayerTotalScore: prevPlayerTotalScore,
+      endOfRound: endOfRound,
+      round: game.round,
+      numberOfPlayers: game.players.length,
+      winner: winner
     };
 
     io.sockets.emit("nextPlayersTurn", data);

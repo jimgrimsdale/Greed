@@ -50,6 +50,9 @@
       table th {
         padding: 0 30px;
       }
+      .message {
+        text-align: center;
+      }
     </style>
   </head>
   <body>
@@ -73,6 +76,8 @@
   <div>Winning scores: <span class="score"></span></div>
   <div>Roll Score: <span class="rollScore"></span></div>
   <div>Total Score: <span class="totalTurnScore">0</span></div>
+
+  <div class="message"></div>
 
   <div class="totals">
     <span class="total">{{total}}</span>
@@ -223,8 +228,21 @@
       function() {
         showWin(diceData.dice);
         $('.rollScore').text(diceData.turnScore);
-        $('.totalTurnScore').text(diceData.totalTurnScore);    
+        $('.totalTurnScore').text(diceData.totalTurnScore);
+        if (diceData.turnScore === 0) {
+          loseGo(diceData.currentPlayerName);
+        } 
       });
+  }
+
+  function loseGo(currentPlayerName) {
+    if (currentPlayerName === name) {
+      $('.message').text('Unlucky!');
+      setTimeout(function() {
+        $('.message').text('');
+        socket.emit('endGo');
+      }, 2000);
+    }    
   }
 
   function showWin(dice) {
@@ -232,7 +250,7 @@
     var strScore = "";
     dice.forEach(function(die, i) {
       if (die.win && die.justRolled && (strWin.indexOf(die.win) === -1 || die.win === "1" || die.win === "5")) {
-        strWin += " " + die.win;
+        strWin += die.win + ", ";
         strScore += " " + die.score;      
       }
       var diceNumber = i + 1;
@@ -242,6 +260,9 @@
         $('#dice' + diceNumber).css('-webkit-filter', '');
       }
     });
+    if (strWin !== "") {
+      strWin = strWin.slice(0, -2);
+    }
     $('.win').text(strWin);
     $('.score').text(strScore);
   }
@@ -278,31 +299,47 @@
   socket.on("nextPlayersTurn", nextPlayersTurn);
 
   function nextPlayersTurn(data) {
-    updateScoreTable(data.prevPlayerNumber);
+    updateScoreTable(data);
 
-    var playerNameText = getPlayerNameText(data.name);
-
-    $('.player-name').text(playerNameText);
-    if (name === data.name) {
-      enableButtons();
+    if (data.winner) {
+      $('.message').text(data.winner + " won!");
     } else {
-      disableButtons();
+      var playerNameText = getPlayerNameText(data.name);
+
+      $('.player-name').text(playerNameText);
+      if (name === data.name) {
+        enableButtons();
+      } else {
+        disableButtons();
+      }
+
+      $('.totalTurnScore').text(0);
+      $('.rollScore').text(0);
+      $('.win').text('');
+      $('.score').text('');
+
+      resetDiceCss();
     }
-
-    $('.totalTurnScore').text(0);
-    $('.rollScore').text(0);
-    $('.win').text('');
-    $('.score').text('');
-
-    resetDiceCss();
   }
 
-  function updateScoreTable(playerNumber) {
-    var $tableRow = $('table tr:last').prev();
-    var columnNumber = playerNumber + 1;
-    var $cell = $tableRow.find('td:nth-child(' + columnNumber  + ')');
-    var totalTurnScore = $('.totalTurnScore').text();
-    $cell.text(totalTurnScore);
+  function updateScoreTable(data) {
+    var $scoreRow = $('table tr:last').prev();
+    var $totalScoreRow = $('table tr:last');
+    var columnNumber = data.prevPlayerNumber + 1;
+    var $scoreCell = $scoreRow.find('td:nth-child(' + columnNumber  + ')');
+    var $totalScoreCell = $totalScoreRow.find('td:nth-child(' + columnNumber  + ')');
+    $scoreCell.text(data.prevPlayerTotalTurnScore);
+    $totalScoreCell.text(data.prevPlayerTotalScore);
+
+    if (data.endOfRound) {
+      var newRow = '<tr><td>' + data.round + '</td>';
+      for(var i = 0; i < data.numberOfPlayers; i++) {
+        newRow += '<td></td>';
+      }
+      newRow += '</tr>';
+      var $newRow = $(newRow);
+      $scoreRow.after($newRow);
+    }    
   }
 
   function enableButtons() {
