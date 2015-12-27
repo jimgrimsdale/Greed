@@ -227,7 +227,7 @@
 
     $.when(animate.rollJustRolledDice(diceData.dice)).then(
       function() {
-        showWin(diceData.dice);
+        showWin(diceData);
         $('.rollScore').text(diceData.turnScore);
         $('.totalTurnScore').text(diceData.totalTurnScore);
         if (diceData.turnScore === 0) {
@@ -246,16 +246,17 @@
     }    
   }
 
-  function showWin(dice) {
+  function showWin(diceData) {
     var strWin = "";
     var strScore = "";
-    dice.forEach(function(die, i) {
+    var isCurrentPlayer = diceData.currentPlayerName === name;
+    diceData.dice.forEach(function(die, i) {
       if (die.win && die.justRolled && (strWin.indexOf(die.win) === -1 || die.win === "1" || die.win === "5")) {
         strWin += die.win + ", ";
         strScore += " " + die.score;      
       }
 
-      if (die.deselected) {
+      if (die.deselected && isCurrentPlayer) {
         $('#dice' + i).data('diceNumber', i);
         $('#dice' + i).data('selected', true);
         $('#dice' + i).on('click', updateScores);
@@ -265,7 +266,9 @@
         $('#dice' + i).css('-webkit-filter', 'sepia(1)');
         $('#dice' + i).data('diceNumber', i);
         $('#dice' + i).data('selected', false);
-        $('#dice' + i).on('click', updateScores);
+        if (isCurrentPlayer) {
+          $('#dice' + i).on('click', updateScores);
+        }        
       } else {
         $('#dice' + i).css('-webkit-filter', '');
       }
@@ -288,7 +291,7 @@
 
   function updatedScores(diceData) {
     removeClickHandlers();
-    showWin(diceData.dice);
+    showWin(diceData);
     $('.rollScore').text(diceData.turnScore);
     $('.totalTurnScore').text(diceData.totalTurnScore);
   }
