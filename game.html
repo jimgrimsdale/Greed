@@ -232,7 +232,10 @@
         $('.totalTurnScore').text(diceData.totalTurnScore);
         if (diceData.turnScore === 0) {
           loseGo(diceData.currentPlayerName);
-        } 
+        }
+        if (diceData.currentPlayerName === name) {
+          $(".roll").prop("disabled", false);
+        }       
       });
   }
 
@@ -244,6 +247,23 @@
         socket.emit('endGo');
       }, 2000);
     }    
+  }
+
+  function rollAgainValid(dice) {
+    var count = 0,
+      noDieDeselected = true;
+    dice.forEach(function(die) {
+      if (die.deselected) {
+        noDieDeselected = false;
+      }
+      if (die.deselected === false && (die.value !== 1 || die.value !== 5)) {
+        count++;
+      }
+    });
+    if (noDieDeselected || count === 0 || count === 3) {
+      return true;
+    }
+    return false;
   }
 
   function showWin(diceData) {
@@ -258,15 +278,15 @@
 
       if (die.deselected && isCurrentPlayer) {
         $('#dice' + i).data('diceNumber', i);
-        $('#dice' + i).data('selected', true);
+        $('#dice' + i).data('deselected', false);
         $('#dice' + i).on('click', updateScores);
       }
 
-      if (die.win) {
-        $('#dice' + i).css('-webkit-filter', 'sepia(1)');
-        $('#dice' + i).data('diceNumber', i);
-        $('#dice' + i).data('selected', false);
-        if (isCurrentPlayer) {
+      if (die.justRolled && (die.win || die.deselected === false)) {
+        $('#dice' + i).css('-webkit-filter', 'sepia(1)');        
+        if (isCurrentPlayer && moreThanOneWin(diceData.dice)) {
+          $('#dice' + i).data('diceNumber', i);
+          $('#dice' + i).data('deselected', true);
           $('#dice' + i).on('click', updateScores);
         }        
       } else {
@@ -275,16 +295,40 @@
     });
     if (strWin !== "") {
       strWin = strWin.slice(0, -2);
+      if (strWin === "3ofakind") {
+        strWin = "3 of a kind";
+      }
+      if (strWin !== "3ofakind" && strWin.indexOf("3ofakind") !== -1) {
+        strWin = "3 of a kind, 3 of a kind";
+      } 
     }
     $('.win').text(strWin);
     $('.score').text(strScore);
   }
 
+  function moreThanOneWin(dice) {
+    var win, die;
+    for (var i = 0; i < 6; i++) {
+      die = dice[i];
+      if (die.justRolled && die.win && die.win.indexOf("kind") !== -1 && (die.value === 1 || die.value === 5)) {
+        return true;
+      }
+      if (!win && die.justRolled && die.win) {
+        win = die.win;
+      } else {
+        if (die.justRolled && die.win && (die.win === "1" || die.win === "5" || win !== die.win)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   function updateScores() {
     var $dieEl = $(this);
-    var selected = $dieEl.data('selected');
+    var deselected = $dieEl.data('deselected');
     var turnScore = parseInt($('.rollScore').text(), 10);
-    socket.emit('updateScores', $dieEl.data('diceNumber'), turnScore, selected);
+    socket.emit('updateScores', $dieEl.data('diceNumber'), turnScore, deselected);
   }
 
   socket.on('updatedScores', updatedScores);
@@ -294,6 +338,11 @@
     showWin(diceData);
     $('.rollScore').text(diceData.turnScore);
     $('.totalTurnScore').text(diceData.totalTurnScore);
+    if (rollAgainValid(diceData.dice)) {
+      $('.roll').prop('disabled', false);
+    } else {
+      $('.roll').prop('disabled', true);
+    }    
   }
 
   function setPlayedDiceOpacity() {
@@ -404,6 +453,7 @@
     });
 
     $('.roll').on('click', function() {
+      $(this).prop("disabled", true)
       socket.emit("roll");
     });
 

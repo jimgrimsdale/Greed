@@ -169,10 +169,11 @@ function connection(socket) {
     io.sockets.emit("rolled", diceData);
   }
 
-  function updateScores(diceNumber, oldTurnScore, selected) {
+  function updateScores(diceNumber, oldTurnScore, deselected) {
     var die = dice[diceNumber];
-    die.deselected = selected ? undefined : true;
+    die.deselected = deselected;
     die.inPlay = true;
+    checkIf3ofAKind(die, deselected);
     resetWins();
     scoreCalculator.calculateScoresForEachDice(dice);
     var turnScore = scoreCalculator.calculateTurnScore(dice);
@@ -187,6 +188,17 @@ function connection(socket) {
     };
 
     io.sockets.emit("updatedScores", diceData);
+  }
+
+  function checkIf3ofAKind(die, deselected) {
+    var win = die.win;
+    if (deselected && (win === "3 of a kind" || win === "3ofakind")) {
+      dice.forEach(function(die) {
+        if (die.win === win) {
+          die.deselected = true;
+        }
+      });
+    }
   }
 
   function resetWins() {
