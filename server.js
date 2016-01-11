@@ -105,15 +105,19 @@ function connection(socket) {
         numberOfPlayers: 1,
         players: [],
         round: 1,
-        finalScoreLine: 500
+        finalScoreLine: 3000
       };
     }
   }
 
   function restartGame() {
+    resetGame();
+    getStatus();
+  }
+
+  function resetGame() {
     game = undefined;
     resetDice();
-    getStatus();
   }
 
   // function resetDice() {
@@ -151,7 +155,6 @@ function connection(socket) {
   }
 
   function roll() {
-    // resetDice();
     diceRoller.resetJustRolledAndDeselected(dice);
     diceRoller.checkAllNotInPlay(dice);
     diceRoller.rollDiceInPlay(dice);
@@ -163,7 +166,8 @@ function connection(socket) {
       dice: dice,
       turnScore: turnScore,
       totalTurnScore: currentPlayer.totalTurnScore,
-      currentPlayerName: currentPlayer.name
+      currentPlayerName: currentPlayer.name,
+      totalScore: currentPlayer.totalScore + currentPlayer.totalTurnScore
     };
 
     io.sockets.emit("rolled", diceData);
@@ -184,7 +188,8 @@ function connection(socket) {
       dice: dice,
       turnScore: turnScore,
       totalTurnScore: currentPlayer.totalTurnScore,
-      currentPlayerName: currentPlayer.name
+      currentPlayerName: currentPlayer.name,
+      totalScore: currentPlayer.totalScore + currentPlayer.totalTurnScore
     };
 
     io.sockets.emit("updatedScores", diceData);
@@ -265,6 +270,10 @@ function connection(socket) {
     };
 
     io.sockets.emit("nextPlayersTurn", data);
+
+    if (winner) {
+      resetGame();
+    }
   }
 
   socket.on("disconnect", disconnect);
@@ -294,7 +303,8 @@ var scoreCalculator = require('./greed_node_modules/scoreCalculator.js');
 var http = require("http"),
   httpserv = http.createServer(handleHTTP),
   port = 8006,
-  host = "127.0.0.1",
+  // host = "127.0.0.1",
+  host = "0.0.0.0",
   // ASQ = require("asynquence"),
   node_static = require("node-static"),
   static_files = new node_static.Server(__dirname),

@@ -1,14 +1,82 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Greed</title>
     <link href="./css/dice.css" rel="stylesheet">
     <style>
+      html {
+        /*background-color: #0D042A;*/
+        font-family: sans-serif;
+
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#090016+0,0d042a+15,0d042a+50,0d042a+85,090016+100 */
+background: rgb(9,0,22); /* Old browsers */
+background: -moz-linear-gradient(left,  rgba(9,0,22,1) 0%, rgba(13,4,42,1) 15%, rgba(13,4,42,1) 50%, rgba(13,4,42,1) 85%, rgba(9,0,22,1) 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(left,  rgba(9,0,22,1) 0%,rgba(13,4,42,1) 15%,rgba(13,4,42,1) 50%,rgba(13,4,42,1) 85%,rgba(9,0,22,1) 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to right,  rgba(9,0,22,1) 0%,rgba(13,4,42,1) 15%,rgba(13,4,42,1) 50%,rgba(13,4,42,1) 85%,rgba(9,0,22,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#090016', endColorstr='#090016',GradientType=1 ); /* IE6-9 */
+
+      }
       h1 {
         text-align: center;
+        font-size: 50px;
+        margin: 5px;
+        color: red;
+      }
+      .container {
+        width: 80%;
+        margin: 0 auto;
+        color: white;
+      }
+      .template-container {
+        color: white
+      }
+      .create-game, .registering {
+        font-size: 40px;
+        margin-bottom: 10px;
+        text-align: center;
+        margin-top: 30px;
+      }
+      .select-number-of-players {
+        font-size: 25px;
+        margin-bottom: 10px;
+      }
+      .number-of-players-button {
+        display: inline-block;
+        color: white;
+        background-color: #190768;
+        width: 174px;
+        height: 250px;
+        text-align: center;
+        font-size: 179px;
+        line-height: 256px;
+        margin-top: 4px;
+        cursor: pointer;
+      }
+      .inputs {
+        width: 330px;
+        margin: 30px auto;
+        font-size: 20px;
+      }
+      .inputs input {
+        background-color: #1F114D;
+        border: none;
+        margin-left: 10px;
+        height: 25px;
+        font-size: 20px;
+        color: white;
       }
       .player-name {
         text-align: center;
+        font-size: 40px;
+        margin: 15px 0 35px;
+        height: 45px;
+      }
+      .button-wrapper {
+        margin: 0 auto;
+        text-align: center;
+        margin-top: 10px;
+        cursor: default;
       }
       .dice-container {
         width: 372px;
@@ -25,33 +93,64 @@
         line-height: 60px;
         margin-left: 30px;
       }
-      .totals {
-        width: 900px;
-        position: relative;
-        left: 0;
-        right: 0;
-      }
-      .total {
-        position: absolute;
-        left: 0;
-      }
-      .running-total {
-        position: absolute;
-        right: 0;
+      .dice:first-child {
+        margin-left: 15px;
       }
       .buttons {
         margin-top: 40px;
         text-align: center;
+        cursor: default;
+        margin-bottom: 20px;
       }
       table {
         text-align: center;
         margin: 0 auto;
+        border-collapse: collapse;
+      }
+      table thead {
+        background-color: white;
+        color: #039;
       }
       table th {
-        padding: 0 30px;
+        padding: 15px 10px 10px;
+      }
+      table tbody td {
+        color: #669;
+        padding: 10px;
+      }
+      table tbody tr:nth-child(odd) {
+        background-color: #e8edff;
+      }
+      table tbody tr:nth-child(even) {
+        background-color: white;
       }
       .message {
         text-align: center;
+        font-size: 40px;
+        height: 45px;
+        margin: 15px 0 30px;
+      }
+      .scores {
+        text-align: center;
+        font-size: 27px;
+      }
+      .scores > span:first-child {
+        margin-right: 30px;
+      }
+      .roll {
+        margin-right: 30px;
+      }
+      .btn {
+        width: 120px;
+        height: 40px;
+        border-radius: 6px;
+        display: inline-block;
+        background-color: blue;
+        line-height: 41px;
+      }
+      .btn.disabled {
+        pointer-events: none;
+        opacity: 0.4;
       }
     </style>
   </head>
@@ -72,22 +171,17 @@
     <div id="dice5" class="dice class1"></div>
   </div>
 
-  <div>Winning combos: <span class="win"></span></div>
-  <div>Winning scores: <span class="score"></span></div>
-  <div>Roll Score: <span class="rollScore"></span></div>
-  <div>Total Score: <span class="totalTurnScore">0</span></div>
-
   <div class="message"></div>
 
-  <div class="totals">
-    <span class="total">{{total}}</span>
-    <span class="running-total">{{runningTotal}}</span>
+  <div class="scores">
+    <span>Score: <span class="totalTurnScore">0</span></span>
+    <span>Total Score: <span class="totalScore">0</span></span>
   </div>
 
   <div class="buttons">
-    <button class="roll" {{disabled}}>Roll</button>
-    <button class="endGo" {{disabled}}>End Go</button>
-    <button class="restartGame" {{disabled}}>Restart Game</button>
+    <div class="roll btn {{disabled}}">Roll</div>
+    <div class="endGo btn {{disabled}}">End Go</div>
+    <div class="restartGame btn {{disabled}}" style="display: none;">Restart Game</div>
   </div>
 
   <table class="score-table">
@@ -108,25 +202,26 @@
 
     <div class="inputs">
       <label for="name">Name: </label>
-      <input type="text" id="name">
+      <input type="text" id="name" autofocus>
     </div>
 
     <div class="button-wrapper">
-      <button class='join'>Join Game</button>
+      <div class='join btn'>Join Game</div>
     </div>
   </div>
 </script>
 <script id="create-game-template" type="text/x-handlebars-template">
   <div class='container'>
     <div class='create-game'>Create Game</div>
+    <div class='select-number-of-players'>Select number of players:</div>
 
-    <div class="inputs">
-      <label for="players">Number of Players: </label>
-      <input type="text" id="players">
-    </div>
-
-    <div class="button-wrapper">
-      <button class='create-button'>Create new game</button>
+    <div class='number-of-players-container'>
+      <div class='number-of-players-button'>1</div>
+      <div class='number-of-players-button'>2</div>
+      <div class='number-of-players-button'>3</div>
+      <div class='number-of-players-button'>4</div>
+      <div class='number-of-players-button'>5</div>
+      <div class='number-of-players-button'>6</div>
     </div>
   </div>
 </script>
@@ -143,6 +238,7 @@
 <script>
   var name;
   var playerNumber = 1;
+  var rollScore;
 
   function createGuid() {
     'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -228,13 +324,15 @@
     $.when(animate.rollJustRolledDice(diceData.dice)).then(
       function() {
         showWin(diceData);
-        $('.rollScore').text(diceData.turnScore);
+        // $('.rollScore').text(diceData.turnScore);
+        rollScore = diceData.turnScore;
         $('.totalTurnScore').text(diceData.totalTurnScore);
+        $('.totalScore').text(diceData.totalScore);
         if (diceData.turnScore === 0) {
           loseGo(diceData.currentPlayerName);
         }
-        if (diceData.currentPlayerName === name) {
-          $(".roll").prop("disabled", false);
+        if (diceData.currentPlayerName === name && diceData.turnScore !== 0) {
+          enableButtons();
         }       
       });
   }
@@ -302,8 +400,9 @@
         strWin = "3 of a kind, 3 of a kind";
       } 
     }
-    $('.win').text(strWin);
-    $('.score').text(strScore);
+
+    $('.message').text(strWin);
+    // $('.score').text(strScore);
   }
 
   function moreThanOneWin(dice) {
@@ -327,7 +426,8 @@
   function updateScores() {
     var $dieEl = $(this);
     var deselected = $dieEl.data('deselected');
-    var turnScore = parseInt($('.rollScore').text(), 10);
+    // var turnScore = parseInt($('.rollScore').text(), 10);
+    turnScore = rollScore;
     socket.emit('updateScores', $dieEl.data('diceNumber'), turnScore, deselected);
   }
 
@@ -336,12 +436,13 @@
   function updatedScores(diceData) {
     removeClickHandlers();
     showWin(diceData);
-    $('.rollScore').text(diceData.turnScore);
+    // $('.rollScore').text(diceData.turnScore);
+    rollScore = diceData.turnScore;
     $('.totalTurnScore').text(diceData.totalTurnScore);
     if (rollAgainValid(diceData.dice)) {
-      $('.roll').prop('disabled', false);
+      $('.roll').removeClass('disabled');
     } else {
-      $('.roll').prop('disabled', true);
+      $('.roll').addClass('disabled');
     }    
   }
 
@@ -349,7 +450,7 @@
     var count = 0;
     for(var i = 0; i < 6; i++) {
       var $dice = $('#dice' + i);
-      if ($dice.css('opacity') === 0.5) {
+      if ($dice.css('opacity') === "0.5") {
         count++;
       }
       if ($dice.css('-webkit-filter') === "sepia(1)") {
@@ -386,6 +487,7 @@
     updateScoreTable(data);
 
     if (data.winner) {
+      $('.player-name').text('');
       $('.message').text(data.winner + " won!");
     } else {
       var playerNameText = getPlayerNameText(data.name);
@@ -398,9 +500,10 @@
       }
 
       $('.totalTurnScore').text(0);
-      $('.rollScore').text(0);
-      $('.win').text('');
-      $('.score').text('');
+      $('.totalScore').text(0);
+      // $('.rollScore').text(0);
+      $('.message').text('');
+      // $('.score').text('');
 
       resetDiceCss();
     }
@@ -427,20 +530,21 @@
   }
 
   function enableButtons() {
-    $('button').each(function() {
-      $(this).prop("disabled", false)
+    $('.btn').each(function() {
+      $(this).removeClass("disabled");
     });
   }
 
   function disableButtons() {
-    $('button').each(function() {
-      $(this).prop("disabled", true)
+    $('.btn').each(function() {
+      $(this).addClass("disabled");
     });
   }
 
   function setClickHandlers() {
-    $('.create-button').on('click', function() {
-      socket.emit("createGame", parseInt($('#players').val(), 10));
+    $('.number-of-players-button').on('click', function() {
+      var numberOfPlayers = parseInt($(this).text(), 10);
+      socket.emit("createGame", numberOfPlayers);
     });
 
     $('.join').on('click', function() {
@@ -453,7 +557,7 @@
     });
 
     $('.roll').on('click', function() {
-      $(this).prop("disabled", true)
+      disableButtons();
       socket.emit("roll");
     });
 
