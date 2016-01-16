@@ -6,29 +6,6 @@ function handleHTTP(req,res) {
     } else {
       static_files.serve(req, res);
     }
-    
-    // if (req.url === '/game') {
-    //   req.url = '/game.html';
-    //   static_files.serve(req, res);
-    // } else
-    // if (/^\/\d+(?=$|[\/?#])/.test(req.url)) {
-    //   req.addListener("end",function(){
-    //     req.url = req.url.replace(/^\/(\d+).*$/,"/$1.html");
-    //     console.log(req.url);
-    //     static_files.serve(req,res);
-    //   });
-    //   req.resume();
-    // }
-    // else if (req.url === "/lib/jquery.js" || req.url === "/lib/handlebars-v4.0.5.js") {
-    //   req.addListener("end",function(){
-    //     static_files.serve(req, res);
-    //   });
-    //   req.resume();
-    // }
-    // else {
-    //   res.writeHead(403);
-    //   res.end();
-    // }
   }
   else {
     res.writeHead(403);
@@ -83,7 +60,6 @@ function connection(socket) {
   }
 
   function getStatus(userId) {
-    // setUpMockGame();
     if(!game) {
       socket.emit("statusUpdate", "createGame");
       return;
@@ -99,17 +75,6 @@ function connection(socket) {
     // }
   }
 
-  function setUpMockGame() {
-    if(!game) {
-      game = {
-        numberOfPlayers: 1,
-        players: [],
-        round: 1,
-        finalScoreLine: 3000
-      };
-    }
-  }
-
   function restartGame() {
     resetGame();
     getStatus();
@@ -119,14 +84,6 @@ function connection(socket) {
     game = undefined;
     resetDice();
   }
-
-  // function resetDice() {
-  //   dice.forEach(function(die) {
-  //     die.inPlay = true;
-  //     die.win = undefined;
-  //     die.score = undefined;
-  //   });
-  // }
 
   function createGame(numberOfPlayers) {
     game = {
@@ -197,10 +154,11 @@ function connection(socket) {
 
   function checkIf3ofAKind(die, deselected) {
     var win = die.win;
-    if (deselected && (win === "3 of a kind" || win === "3ofakind")) {
+    if (deselected && (win === "3 of a kind" || win === "3ofakind") && die.value !== 1 && die.value !== 5) {
       dice.forEach(function(die) {
         if (die.win === win) {
           die.deselected = true;
+          die.inPlay = true;
         }
       });
     }
@@ -260,6 +218,7 @@ function connection(socket) {
 
     var data = {
       name: currentPlayer.name,
+      totalScore: currentPlayer.totalScore,
       prevPlayerNumber: prevPlayerNumber,
       prevPlayerTotalTurnScore: prevPlayerTotalTurnScore,
       prevPlayerTotalScore: prevPlayerTotalScore,
@@ -305,12 +264,9 @@ var http = require("http"),
   port = 8006,
   // host = "127.0.0.1",
   host = "0.0.0.0",
-  // ASQ = require("asynquence"),
   node_static = require("node-static"),
   static_files = new node_static.Server(__dirname),
   io = require("socket.io").listen(httpserv);
-
-// require("asynquence-contrib");
 
 // configure socket.io
 io.configure(function(){

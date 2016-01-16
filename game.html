@@ -6,16 +6,12 @@
     <link href="./css/dice.css" rel="stylesheet">
     <style>
       html {
-        /*background-color: #0D042A;*/
         font-family: sans-serif;
 
-/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#090016+0,0d042a+15,0d042a+50,0d042a+85,090016+100 */
-background: rgb(9,0,22); /* Old browsers */
-background: -moz-linear-gradient(left,  rgba(9,0,22,1) 0%, rgba(13,4,42,1) 15%, rgba(13,4,42,1) 50%, rgba(13,4,42,1) 85%, rgba(9,0,22,1) 100%); /* FF3.6-15 */
-background: -webkit-linear-gradient(left,  rgba(9,0,22,1) 0%,rgba(13,4,42,1) 15%,rgba(13,4,42,1) 50%,rgba(13,4,42,1) 85%,rgba(9,0,22,1) 100%); /* Chrome10-25,Safari5.1-6 */
-background: linear-gradient(to right,  rgba(9,0,22,1) 0%,rgba(13,4,42,1) 15%,rgba(13,4,42,1) 50%,rgba(13,4,42,1) 85%,rgba(9,0,22,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#090016', endColorstr='#090016',GradientType=1 ); /* IE6-9 */
-
+        background: rgb(9,0,22); /* Old browsers */
+        background: -moz-linear-gradient(left,  rgba(9,0,22,1) 0%, rgba(13,4,42,1) 15%, rgba(13,4,42,1) 50%, rgba(13,4,42,1) 85%, rgba(9,0,22,1) 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(left,  rgba(9,0,22,1) 0%,rgba(13,4,42,1) 15%,rgba(13,4,42,1) 50%,rgba(13,4,42,1) 85%,rgba(9,0,22,1) 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to right,  rgba(9,0,22,1) 0%,rgba(13,4,42,1) 15%,rgba(13,4,42,1) 50%,rgba(13,4,42,1) 85%,rgba(9,0,22,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
       }
       h1 {
         text-align: center;
@@ -180,7 +176,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#090016', end
 
   <div class="buttons">
     <div class="roll btn {{disabled}}">Roll</div>
-    <div class="endGo btn {{disabled}}">End Go</div>
+    <div class="endGo btn disabled">End Go</div>
     <div class="restartGame btn {{disabled}}" style="display: none;">Restart Game</div>
   </div>
 
@@ -269,7 +265,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#090016', end
       case "registered": 
         var source   = $("#message-template").html();
         template = Handlebars.compile(source);
-        var context =  { message: "Waiting for players. Please wait."};
+        var context =  { message: "Waiting for players..."};
         template = template(context);
         break;
       case "inprogress": 
@@ -324,7 +320,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#090016', end
     $.when(animate.rollJustRolledDice(diceData.dice)).then(
       function() {
         showWin(diceData);
-        // $('.rollScore').text(diceData.turnScore);
         rollScore = diceData.turnScore;
         $('.totalTurnScore').text(diceData.totalTurnScore);
         $('.totalScore').text(diceData.totalScore);
@@ -354,7 +349,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#090016', end
       if (die.deselected) {
         noDieDeselected = false;
       }
-      if (die.deselected === false && (die.value !== 1 || die.value !== 5)) {
+      // if die has been selected
+      if (die.deselected === false && (die.value !== 1 && die.value !== 5)) {
         count++;
       }
     });
@@ -402,13 +398,19 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#090016', end
     }
 
     $('.message').text(strWin);
-    // $('.score').text(strScore);
   }
 
   function moreThanOneWin(dice) {
     var win, die;
     for (var i = 0; i < 6; i++) {
       die = dice[i];
+      if (die.justRolled && die.win && 
+        ((die.win.indexOf("4 of a kind") !== -1) ||
+        (die.win.indexOf("5 of a kind") !== -1) ||
+        (die.win.indexOf("6 of a kind") !== -1))) {
+        return true;
+      }
+      // 3 ones or fives
       if (die.justRolled && die.win && die.win.indexOf("kind") !== -1 && (die.value === 1 || die.value === 5)) {
         return true;
       }
@@ -426,7 +428,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#090016', end
   function updateScores() {
     var $dieEl = $(this);
     var deselected = $dieEl.data('deselected');
-    // var turnScore = parseInt($('.rollScore').text(), 10);
     turnScore = rollScore;
     socket.emit('updateScores', $dieEl.data('diceNumber'), turnScore, deselected);
   }
@@ -436,7 +437,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#090016', end
   function updatedScores(diceData) {
     removeClickHandlers();
     showWin(diceData);
-    // $('.rollScore').text(diceData.turnScore);
     rollScore = diceData.turnScore;
     $('.totalTurnScore').text(diceData.totalTurnScore);
     if (rollAgainValid(diceData.dice)) {
@@ -484,26 +484,28 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#090016', end
   socket.on("nextPlayersTurn", nextPlayersTurn);
 
   function nextPlayersTurn(data) {
+    var winner;
     updateScoreTable(data);
 
     if (data.winner) {
       $('.player-name').text('');
-      $('.message').text(data.winner + " won!");
+      winner = data.winner === name ? "You" : data.winner;
+      $('.message').text(winner + " won!");
+      disableButtons();
     } else {
       var playerNameText = getPlayerNameText(data.name);
 
       $('.player-name').text(playerNameText);
       if (name === data.name) {
-        enableButtons();
+        $('.roll').removeClass("disabled");
+        $('.endGo').addClass("disabled");
       } else {
         disableButtons();
       }
 
       $('.totalTurnScore').text(0);
-      $('.totalScore').text(0);
-      // $('.rollScore').text(0);
+      $('.totalScore').text(data.totalScore);
       $('.message').text('');
-      // $('.score').text('');
 
       resetDiceCss();
     }
@@ -545,6 +547,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#090016', end
     $('.number-of-players-button').on('click', function() {
       var numberOfPlayers = parseInt($(this).text(), 10);
       socket.emit("createGame", numberOfPlayers);
+    });
+
+    $('#name').keypress(function(e){
+      if(e.keyCode===13)
+      $('.join').click();
     });
 
     $('.join').on('click', function() {
