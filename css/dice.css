@@ -2,86 +2,59 @@
   width: 32px;
   height: 32px;
   background-repeat: no-repeat;
+  background-image: url("../images/dice-sprite.gif");
 }
 .class1 {
-  background-image: url("../images/dices-1.gif");
-  width: 32px;
-  height: 32px;
+  background-position-x: -192px;
 }
 .class2 {
-  background-image: url("../images/dices-2.gif");
-  width: 32px;
-  height: 32px;
+  background-position-x: -224px;
 }
 .class3 {
-  background-image: url("../images/dices-3.gif");
-  width: 32px;
-  height: 32px;
+  background-position-x: -256px;
 }
 .class4 {
-  background-image: url("../images/dices-4.gif");
-  width: 32px;
-  height: 32px;
+  background-position-x: -288px;
 }
 .class5 {
-  background-image: url("../images/dices-5.gif");
-  width: 32px;
-  height: 32px;
+  background-position-x: -320px;
 }
 .class6 {
-  background-image: url("../images/dices-6.gif");
-  width: 32px;
-  height: 32px;
+  background-position-x: -352px;
 }
 .class7 {
-  background-image: url("../images/dicet-1.gif");
-  width: 32px;
-  height: 32px;
+  background-position-x: -384px;
 }
 .class8 {
-  background-image: url("../images/dicet-2.gif");
-  width: 32px;
-  height: 32px;
+  background-position-x: -416px;
 }
 .class9 {
-  background-image: url("../images/dicet-3.gif");
-  width: 32px;
-  height: 32px;
+  background-position-x: -448px;
 }
 .class10 {
-  background-image: url("../images/dicet-4.gif");
-  width: 32px;
-  height: 32px;
+  background-position-x: -480px;
 }
 .class11 {
-  background-image: url("../images/dicet-5.gif");
-  width: 32px;
-  height: 32px;
+  background-position-x: -512px;
 }
 .class12 {
-  background-image: url("../images/dicet-6.gif");
-  width: 32px;
-  height: 32px;
+  background-position-x: -544px;
 }
 .class13 {
-  background-image: url("../images/die-1.gif");
-  width: 32px;
-  height: 32px;
+  background-position-x: -0px;
 }
 .class14 {
-  background-image: url("../images/die-2.gif");
-  width: 32px;
-  height: 32px;
+  background-position-x: -32px;
 }
 .class15 {
-  background-image: url("../images/die-3.gif");
+  background-position-x: -64px;
 }
 .class16 {
-  background-image: url("../images/die-4.gif");
+  background-position-x: -96px;
 }
 .class17 {
-  background-image: url("../images/die-5.gif");
+  background-position-x: -128px;
 }
 .class18 {
-  background-image: url("../images/die-6.gif");
+  background-position-x: -160px;
 }
