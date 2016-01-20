@@ -439,6 +439,7 @@
     showWin(diceData);
     rollScore = diceData.turnScore;
     $('.totalTurnScore').text(diceData.totalTurnScore);
+    $('.totalScore').text(diceData.totalScore);
     if (rollAgainValid(diceData.dice)) {
       $('.roll').removeClass('disabled');
     } else {
