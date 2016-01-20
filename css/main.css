@@ -1,0 +1,162 @@
+html {
+  font-family: 'Indie Flower', cursive;
+
+  background: rgb(9,0,22); /* Old browsers */
+  background: -moz-linear-gradient(left,  rgba(9,0,22,1) 0%, rgba(13,4,42,1) 15%, rgba(13,4,42,1) 50%, rgba(13,4,42,1) 85%, rgba(9,0,22,1) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(left,  rgba(9,0,22,1) 0%,rgba(13,4,42,1) 15%,rgba(13,4,42,1) 50%,rgba(13,4,42,1) 85%,rgba(9,0,22,1) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to right,  rgba(9,0,22,1) 0%,rgba(13,4,42,1) 15%,rgba(13,4,42,1) 50%,rgba(13,4,42,1) 85%,rgba(9,0,22,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+}
+h1 {
+  text-align: center;
+  margin: 5px;
+  color: red;
+  font-size: 82px;
+  margin-bottom: -30px;
+}
+.container {
+  width: 80%;
+  margin: 0 auto;
+  color: white;
+}
+.template-container {
+  color: white
+}
+.create-game, .registering {
+  font-size: 40px;
+  margin-bottom: 10px;
+  text-align: center;
+  margin-top: 30px;
+}
+.select-number-of-players {
+  font-size: 25px;
+  margin-bottom: 10px;
+}
+.number-of-players-button {
+  display: inline-block;
+  color: white;
+  background-color: #190768;
+  width: 128px;
+  height: 159px;
+  text-align: center;
+  font-size: 116px;
+  line-height: 165px;
+  margin-top: 4px;
+  cursor: pointer;
+}
+.inputs {
+  width: 330px;
+  margin: 30px auto;
+  font-size: 20px;
+}
+.inputs input {
+  background-color: #1F114D;
+  border: none;
+  margin-left: 10px;
+  height: 25px;
+  font-size: 20px;
+  color: white;
+}
+.player-name {
+  text-align: center;
+  font-size: 40px;
+  margin: 15px 0 35px;
+  height: 45px;
+}
+.button-wrapper {
+  margin: 0 auto;
+  text-align: center;
+  margin-top: 10px;
+  cursor: default;
+}
+.dice-container {
+  width: 372px;
+  margin: 0 auto;
+  font-size: 0;
+}
+.dice {
+  display: inline-block;
+  width: 150px;
+  font-size: 16px;
+  text-align: center;
+  height: 60px;
+  vertical-align: middle;
+  line-height: 60px;
+  margin-left: 30px;
+}
+.dice:first-child {
+  margin-left: 15px;
+}
+.buttons {
+  margin-top: 15px;
+  text-align: center;
+  cursor: default;
+  margin-bottom: 30px;
+}
+table {
+  text-align: center;
+  margin: 0 auto;
+  border-collapse: collapse;
+  min-width: 340px;
+}
+table thead {
+  background-color: white;
+  color: #039;
+}
+table th {
+  padding: 15px 10px 10px;
+}
+th:first-child {
+  border-top-left-radius: 6px;
+}
+th:last-child {
+  border-top-right-radius: 6px;
+}
+tr:last-child td:first-child {
+  border-bottom-left-radius: 6px;
+}
+tr:last-child td:last-child {
+  border-bottom-right-radius: 6px;
+}
+table tbody td {
+  color: #FF2D2D;
+  padding: 10px;
+}
+table tbody tr:nth-child(odd) {
+  background-color: rgb(11, 27, 53);
+}
+table tbody tr:nth-child(even) {
+  background-color: rgb(15, 33, 63);
+}
+.message {
+  text-align: center;
+  font-size: 40px;
+  height: 45px;
+  margin: 15px 0 15px;
+}
+.scores {
+  text-align: center;
+  font-size: 27px;
+}
+.scores > span:first-child {
+  margin-right: 30px;
+}
+.roll {
+  margin-right: 9px;
+}
+.btn.endGo {
+  background-color: maroon;
+}
+.btn {
+  width: 120px;
+  height: 40px;
+  border-radius: 6px;
+  display: inline-block;
+  background-color: blue;
+  line-height: 44px;
+  cursor: pointer;
+  font-size: 20px;
+}
+.btn.disabled {
+  pointer-events: none;
+  opacity: 0.4;
+}

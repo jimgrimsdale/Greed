@@ -3,594 +3,92 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Greed</title>
+    <link href='https://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
+    <link href="./css/main.css" rel="stylesheet">
     <link href="./css/dice.css" rel="stylesheet">
-    <style>
-      html {
-        font-family: sans-serif;
-
-        background: rgb(9,0,22); /* Old browsers */
-        background: -moz-linear-gradient(left,  rgba(9,0,22,1) 0%, rgba(13,4,42,1) 15%, rgba(13,4,42,1) 50%, rgba(13,4,42,1) 85%, rgba(9,0,22,1) 100%); /* FF3.6-15 */
-        background: -webkit-linear-gradient(left,  rgba(9,0,22,1) 0%,rgba(13,4,42,1) 15%,rgba(13,4,42,1) 50%,rgba(13,4,42,1) 85%,rgba(9,0,22,1) 100%); /* Chrome10-25,Safari5.1-6 */
-        background: linear-gradient(to right,  rgba(9,0,22,1) 0%,rgba(13,4,42,1) 15%,rgba(13,4,42,1) 50%,rgba(13,4,42,1) 85%,rgba(9,0,22,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-      }
-      h1 {
-        text-align: center;
-        font-size: 50px;
-        margin: 5px;
-        color: red;
-      }
-      .container {
-        width: 80%;
-        margin: 0 auto;
-        color: white;
-      }
-      .template-container {
-        color: white
-      }
-      .create-game, .registering {
-        font-size: 40px;
-        margin-bottom: 10px;
-        text-align: center;
-        margin-top: 30px;
-      }
-      .select-number-of-players {
-        font-size: 25px;
-        margin-bottom: 10px;
-      }
-      .number-of-players-button {
-        display: inline-block;
-        color: white;
-        background-color: #190768;
-        width: 128px;
-        height: 159px;
-        text-align: center;
-        font-size: 116px;
-        line-height: 165px;
-        margin-top: 4px;
-        cursor: pointer;
-      }
-      .inputs {
-        width: 330px;
-        margin: 30px auto;
-        font-size: 20px;
-      }
-      .inputs input {
-        background-color: #1F114D;
-        border: none;
-        margin-left: 10px;
-        height: 25px;
-        font-size: 20px;
-        color: white;
-      }
-      .player-name {
-        text-align: center;
-        font-size: 40px;
-        margin: 15px 0 35px;
-        height: 45px;
-      }
-      .button-wrapper {
-        margin: 0 auto;
-        text-align: center;
-        margin-top: 10px;
-        cursor: default;
-      }
-      .dice-container {
-        width: 372px;
-        margin: 0 auto;
-        font-size: 0;
-      }
-      .dice {
-        display: inline-block;
-        width: 150px;
-        font-size: 16px;
-        text-align: center;
-        height: 60px;
-        vertical-align: middle;
-        line-height: 60px;
-        margin-left: 30px;
-      }
-      .dice:first-child {
-        margin-left: 15px;
-      }
-      .buttons {
-        margin-top: 40px;
-        text-align: center;
-        cursor: default;
-        margin-bottom: 20px;
-      }
-      table {
-        text-align: center;
-        margin: 0 auto;
-        border-collapse: collapse;
-      }
-      table thead {
-        background-color: white;
-        color: #039;
-      }
-      table th {
-        padding: 15px 10px 10px;
-      }
-      table tbody td {
-        color: #669;
-        padding: 10px;
-      }
-      table tbody tr:nth-child(odd) {
-        background-color: #e8edff;
-      }
-      table tbody tr:nth-child(even) {
-        background-color: white;
-      }
-      .message {
-        text-align: center;
-        font-size: 40px;
-        height: 45px;
-        margin: 15px 0 30px;
-      }
-      .scores {
-        text-align: center;
-        font-size: 27px;
-      }
-      .scores > span:first-child {
-        margin-right: 30px;
-      }
-      .roll {
-        margin-right: 30px;
-      }
-      .btn {
-        width: 120px;
-        height: 40px;
-        border-radius: 6px;
-        display: inline-block;
-        background-color: blue;
-        line-height: 41px;
-      }
-      .btn.disabled {
-        pointer-events: none;
-        opacity: 0.4;
-      }
-    </style>
   </head>
   <body>
     <h1>Greed</h1>
 
     <div class="template-container"></div>
 
-<script id="game-template" type="text/x-handlebars-template">
-  <div class="player-name">{{playerName}}</div>
+    <script id="game-template" type="text/x-handlebars-template">
+      <div class="player-name">{{playerName}}</div>
 
-  <div class="dice-container">
-    <div id="dice0" class="dice class1"></div>
-    <div id="dice1" class="dice class1"></div>
-    <div id="dice2" class="dice class1"></div>
-    <div id="dice3" class="dice class1"></div>
-    <div id="dice4" class="dice class1"></div>
-    <div id="dice5" class="dice class1"></div>
-  </div>
+      <div class="dice-container">
+        <div id="dice0" class="dice class1"></div>
+        <div id="dice1" class="dice class1"></div>
+        <div id="dice2" class="dice class1"></div>
+        <div id="dice3" class="dice class1"></div>
+        <div id="dice4" class="dice class1"></div>
+        <div id="dice5" class="dice class1"></div>
+      </div>
 
-  <div class="message"></div>
+      <div class="message"></div>
 
-  <div class="scores">
-    <span>Score: <span class="totalTurnScore">0</span></span>
-    <span>Total Score: <span class="totalScore">0</span></span>
-  </div>
+      <div class="scores">
+        <span>Score: <span class="totalTurnScore">0</span></span>
+        <span>Total Score: <span class="totalScore">0</span></span>
+      </div>
 
-  <div class="buttons">
-    <div class="roll btn {{disabled}}">Roll</div>
-    <div class="endGo btn disabled">End Go</div>
-    <div class="restartGame btn {{disabled}}" style="display: none;">Restart Game</div>
-  </div>
+      <div class="buttons">
+        <div class="roll btn {{disabled}}">Roll</div>
+        <div class="endGo btn disabled">End Go</div>
+        <div class="restartGame btn {{disabled}}" style="display: none;">Restart Game</div>
+      </div>
 
-  <table class="score-table">
-    <thead>
-      {{{thead}}}
-    </thead>
-    <tr>
-      {{{trRound1}}}
-    </tr>
-    <tr>
-      {{{trTotal}}}
-    </tr>
-  </table>
-</script>
-<script id="registering-template" type="text/x-handlebars-template">
-  <div class='container'>
-    <div class='registering'>Game registering</div>
+      <table class="score-table">
+        <thead>
+          {{{thead}}}
+        </thead>
+        <tr>
+          {{{trRound1}}}
+        </tr>
+        <tr>
+          {{{trTotal}}}
+        </tr>
+      </table>
+    </script>
+    <script id="registering-template" type="text/x-handlebars-template">
+      <div class='container'>
+        <div class='registering'>Game registering</div>
 
-    <div class="inputs">
-      <label for="name">Name: </label>
-      <input type="text" id="name" autofocus>
-    </div>
+        <div class="inputs">
+          <label for="name">Name: </label>
+          <input type="text" id="name" autofocus>
+        </div>
 
-    <div class="button-wrapper">
-      <div class='join btn'>Join Game</div>
-    </div>
-  </div>
-</script>
-<script id="create-game-template" type="text/x-handlebars-template">
-  <div class='container'>
-    <div class='create-game'>Create Game</div>
-    <div class='select-number-of-players'>Select number of players:</div>
+        <div class="button-wrapper">
+          <div class='join btn'>Join Game</div>
+        </div>
+      </div>
+    </script>
+    <script id="create-game-template" type="text/x-handlebars-template">
+      <div class='container'>
+        <div class='create-game'>Create Game</div>
+        <div class='select-number-of-players'>Select number of players:</div>
 
-    <div class='number-of-players-container'>
-      <div class='number-of-players-button'>1</div>
-      <div class='number-of-players-button'>2</div>
-      <div class='number-of-players-button'>3</div>
-      <div class='number-of-players-button'>4</div>
-      <div class='number-of-players-button'>5</div>
-      <div class='number-of-players-button'>6</div>
-    </div>
-  </div>
-</script>
-<script id="message-template" type="text/x-handlebars-template">
-  <div class='container'>
-    <div class='in-progress'>{{message}}</div>
-  </div>
-</script>
+        <div class='number-of-players-container'>
+          <div class='number-of-players-button'>1</div>
+          <div class='number-of-players-button'>2</div>
+          <div class='number-of-players-button'>3</div>
+          <div class='number-of-players-button'>4</div>
+          <div class='number-of-players-button'>5</div>
+          <div class='number-of-players-button'>6</div>
+        </div>
+      </div>
+    </script>
+    <script id="message-template" type="text/x-handlebars-template">
+      <div class='container'>
+        <div class='in-progress'>{{message}}</div>
+      </div>
+    </script>
 
-<script src="/lib/jquery.js"></script>
-<script src="/lib/handlebars-v4.0.5.js"></script>
-<script src="/socket.io/socket.io.js"></script>
-<script src="/clientjs/animate.js"></script>
-<script>
-  var name;
-  var playerNumber = 1;
-  var rollScore;
+    <script src="/lib/jquery.js"></script>
+    <script src="/lib/handlebars-v4.0.5.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/clientjs/animate.js"></script>
+    <script src="/clientjs/game.js"></script>
 
-  function createGuid() {
-    'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = crypto.getRandomValues(new Uint8Array(1))[0]%16|0, v = c == 'x' ? r : (r&0x3|0x8);
-      return v.toString(16);
-    });
-  }
-
-  var socket = io.connect("/",{
-    "connect timeout": 3000,
-    "reconnect": false
-  });
-
-  socket.emit("getStatus");
-
-  socket.on("statusUpdate", function(status, game) {
-    var template;
-
-    switch (status) {
-      case "createGame":
-        var source   = $("#create-game-template").html();
-        template = Handlebars.compile(source);
-        break;
-      case "registering": 
-        var source = $("#registering-template").html();
-        template = Handlebars.compile(source);
-        break;
-      case "registered": 
-        var source   = $("#message-template").html();
-        template = Handlebars.compile(source);
-        var context =  { message: "Waiting for players..."};
-        template = template(context);
-        break;
-      case "inprogress": 
-        var source   = $("#message-template").html();
-        template = Handlebars.compile(source);
-        var context =  { message: "Game in progress. Please wait"};
-        template = template(context);
-        break;
-      case "startGame":
-        var source = $("#game-template").html();
-        template = Handlebars.compile(source);
-
-        var thead = '<th>Round</th>',
-          trRound1 = '<td>1</td>',
-          trTotal = '<td>Total</td>';
-
-        game.players.forEach(function(player) {
-          thead += '<th>' + player.name + '</th>';
-          trRound1 += '<td></td>';
-          trTotal += '<td>0</td>';
-        });
-
-        var context = {
-          playerName: getPlayerNameText(game.players[0].name),
-          total: 0,
-          runningTotal: 0,
-          thead: thead,
-          trRound1: trRound1,
-          trTotal: trTotal,
-          disabled: game.players[0].name === name ? '' : 'disabled'
-        }
-        template = template(context);
-        break;
-    }
-    $('.template-container').html(template);
-    setClickHandlers();
-  });
-
-  function getPlayerNameText(currentPlayerName) {
-    if (currentPlayerName === name) {
-      return 'Your turn';
-    }
-    return currentPlayerName + "'s turn";
-  }
-
-  socket.on("rolled", rolled);
-
-  function rolled(diceData) {
-    setPlayedDiceOpacity();
-    removeClickHandlers();
-
-    $.when(animate.rollJustRolledDice(diceData.dice)).then(
-      function() {
-        showWin(diceData);
-        rollScore = diceData.turnScore;
-        $('.totalTurnScore').text(diceData.totalTurnScore);
-        $('.totalScore').text(diceData.totalScore);
-        if (diceData.turnScore === 0) {
-          loseGo(diceData.currentPlayerName);
-        }
-        if (diceData.currentPlayerName === name && diceData.turnScore !== 0) {
-          enableButtons();
-        }       
-      });
-  }
-
-  function loseGo(currentPlayerName) {
-    if (currentPlayerName === name) {
-      $('.message').text('Unlucky!');
-      setTimeout(function() {
-        $('.message').text('');
-        socket.emit('endGo');
-      }, 2000);
-    } else {
-      $('.message').text(currentPlayerName + ' scored nothing!');
-      setTimeout(function() {
-        $('.message').text('');
-      }, 2000);
-    }    
-  }
-
-  function rollAgainValid(dice) {
-    var count = 0,
-      noDieDeselected = true;
-    dice.forEach(function(die) {
-      if (die.deselected) {
-        noDieDeselected = false;
-      }
-      // if die has been selected
-      if (die.deselected === false && (die.value !== 1 && die.value !== 5)) {
-        count++;
-      }
-    });
-    if (noDieDeselected || count === 0 || count === 3) {
-      return true;
-    }
-    return false;
-  }
-
-  function showWin(diceData) {
-    var strWin = "";
-    var strScore = "";
-    var isCurrentPlayer = diceData.currentPlayerName === name;
-    diceData.dice.forEach(function(die, i) {
-      if (die.win && die.justRolled && (strWin.indexOf(die.win) === -1 || die.win === "1" || die.win === "5")) {
-        strWin += die.win + ", ";
-        strScore += " " + die.score;      
-      }
-
-      if (die.deselected && isCurrentPlayer) {
-        $('#dice' + i).data('diceNumber', i);
-        $('#dice' + i).data('deselected', false);
-        $('#dice' + i).on('click', updateScores);
-      }
-
-      if (die.justRolled && (die.win || die.deselected === false)) {
-        $('#dice' + i).css('-webkit-filter', 'sepia(1)');        
-        if (isCurrentPlayer && moreThanOneWin(diceData.dice)) {
-          $('#dice' + i).data('diceNumber', i);
-          $('#dice' + i).data('deselected', true);
-          $('#dice' + i).on('click', updateScores);
-        }        
-      } else {
-        $('#dice' + i).css('-webkit-filter', '');
-      }
-    });
-    if (strWin !== "") {
-      strWin = strWin.slice(0, -2);
-      if (strWin === "3ofakind") {
-        strWin = "3 of a kind";
-      }
-      if (strWin !== "3ofakind" && strWin.indexOf("3ofakind") !== -1) {
-        strWin = "3 of a kind, 3 of a kind";
-      } 
-    }
-
-    $('.message').text(strWin);
-  }
-
-  function moreThanOneWin(dice) {
-    var win, die;
-    for (var i = 0; i < 6; i++) {
-      die = dice[i];
-      if (die.justRolled && die.win && 
-        ((die.win.indexOf("4 of a kind") !== -1) ||
-        (die.win.indexOf("5 of a kind") !== -1) ||
-        (die.win.indexOf("6 of a kind") !== -1))) {
-        return true;
-      }
-      // 3 ones or fives
-      if (die.justRolled && die.win && die.win.indexOf("kind") !== -1 && (die.value === 1 || die.value === 5)) {
-        return true;
-      }
-      if (!win && die.justRolled && die.win) {
-        win = die.win;
-      } else {
-        if (die.justRolled && die.win && (die.win === "1" || die.win === "5" || win !== die.win)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  function updateScores() {
-    var $dieEl = $(this);
-    var deselected = $dieEl.data('deselected');
-    turnScore = rollScore;
-    socket.emit('updateScores', $dieEl.data('diceNumber'), turnScore, deselected);
-  }
-
-  socket.on('updatedScores', updatedScores);
-
-  function updatedScores(diceData) {
-    removeClickHandlers();
-    showWin(diceData);
-    rollScore = diceData.turnScore;
-    $('.totalTurnScore').text(diceData.totalTurnScore);
-    $('.totalScore').text(diceData.totalScore);
-
-    if (diceData.currentPlayerName === name) {
-      if (rollAgainValid(diceData.dice)) {
-        $('.roll').removeClass('disabled');
-      } else {
-        $('.roll').addClass('disabled');
-      }
-    }
-  }
-
-  function setPlayedDiceOpacity() {
-    var count = 0;
-    for(var i = 0; i < 6; i++) {
-      var $dice = $('#dice' + i);
-      if ($dice.css('opacity') === "0.5") {
-        count++;
-      }
-      if ($dice.css('-webkit-filter') === "sepia(1)") {
-        $dice.css('-webkit-filter', '');
-        $dice.css('opacity', 0.5);
-        count++;
-      }
-    }
-    if (count === 6) {
-      for(var i = 0; i < 6; i++) {
-        var $dice = $('#dice' + i);
-        $dice.css('opacity', '');
-      }
-    }
-  }
-
-  function removeClickHandlers() {
-    for(var i = 0; i < 6; i++) {
-      $('#dice' + i).off('click');
-    }
-  }
-
-  function resetDiceCss() {
-    for(var i = 0; i < 6; i++) {
-      var $dice = $('#dice' + i);
-      $dice.css('-webkit-filter', '');
-      $dice.css('opacity', '');
-    }
-  }
-
-  socket.on("nextPlayersTurn", nextPlayersTurn);
-
-  function nextPlayersTurn(data) {
-    var winner, prevPlayerName;
-    updateScoreTable(data);
-
-    if (data.winner) {
-      $('.player-name').text('');
-      winner = data.winner === name ? "You" : data.winner;
-      $('.message').text(winner + " won!");
-      disableButtons();
-    } else {
-      prevPlayerName = data.prevPlayerName === name ? "You" : data.prevPlayerName;
-      $('.message').text(prevPlayerName + ' scored ' + data.prevPlayerTotalTurnScore);
-      setTimeout(function() {
-        var playerNameText = getPlayerNameText(data.name);
-        $('.player-name').text(playerNameText);
-
-        if (name === data.name) {
-          $('.roll').removeClass("disabled");
-          $('.endGo').addClass("disabled");
-        } else {
-          disableButtons();
-        }
-
-        $('.totalTurnScore').text(0);
-        $('.totalScore').text(data.totalScore);
-        $('.message').text('');
-
-        resetDiceCss();
-      }, 2000);
-    }
-  }
-
-  function updateScoreTable(data) {
-    var $scoreRow = $('table tr:last').prev();
-    var $totalScoreRow = $('table tr:last');
-    var columnNumber = data.prevPlayerNumber + 1;
-    var $scoreCell = $scoreRow.find('td:nth-child(' + columnNumber  + ')');
-    var $totalScoreCell = $totalScoreRow.find('td:nth-child(' + columnNumber  + ')');
-    $scoreCell.text(data.prevPlayerTotalTurnScore);
-    $totalScoreCell.text(data.prevPlayerTotalScore);
-
-    if (data.endOfRound) {
-      var newRow = '<tr><td>' + data.round + '</td>';
-      for(var i = 0; i < data.numberOfPlayers; i++) {
-        newRow += '<td></td>';
-      }
-      newRow += '</tr>';
-      var $newRow = $(newRow);
-      $scoreRow.after($newRow);
-    }    
-  }
-
-  function enableButtons() {
-    $('.btn').each(function() {
-      $(this).removeClass("disabled");
-    });
-  }
-
-  function disableButtons() {
-    $('.btn').each(function() {
-      $(this).addClass("disabled");
-    });
-  }
-
-  function setClickHandlers() {
-    $('.number-of-players-button').on('click', function() {
-      var numberOfPlayers = parseInt($(this).text(), 10);
-      socket.emit("createGame", numberOfPlayers);
-    });
-
-    $('#name').keypress(function(e){
-      if(e.keyCode===13)
-      $('.join').click();
-    });
-
-    $('.join').on('click', function() {
-      name = $('#name').val();
-      var data = {
-        name: $('#name').val(),
-        id: createGuid()
-      }
-      socket.emit("register", data);
-    });
-
-    $('.roll').on('click', function() {
-      disableButtons();
-      socket.emit("roll");
-    });
-
-    $('.restartGame').on('click', function() {
-      socket.emit('restartGame');
-      location.reload();
-    });
-
-    $('.endGo').on('click', function() {
-      socket.emit("endGo");
-    });
-  }
-
-</script>
-</body>
+  </body>
 </html>

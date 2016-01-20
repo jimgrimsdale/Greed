@@ -58,3 +58,6 @@
 .class18 {
   background-position-x: -160px;
 }
+.selectable {
+  cursor: pointer;
+}
