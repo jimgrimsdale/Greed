@@ -1,11 +1,14 @@
 function handleHTTP(req,res) {
   if (req.method == "GET") {
-    if (req.url === '/game') {
-      req.url = '/game.html';
-      static_files.serve(req, res);
-    } else {
-      static_files.serve(req, res);
+    switch(req.url) {
+      case '/game':
+        req.url = '/game.html';
+        break;
+      case '/restartgame': 
+        resetGame();
+        req.url = '/game.html';        
     }
+    static_files.serve(req, res);
   }
   else {
     res.writeHead(403);
@@ -54,6 +57,11 @@ var dice = [
 ];
 var currentPlayer;
 
+function resetGame() {
+  game = undefined;
+  resetDice();
+}
+
 function connection(socket) {
   function disconnect() {
     console.log("disconnected");
@@ -78,11 +86,6 @@ function connection(socket) {
   function restartGame() {
     resetGame();
     getStatus();
-  }
-
-  function resetGame() {
-    game = undefined;
-    resetDice();
   }
 
   function createGame(numberOfPlayers) {
@@ -261,9 +264,9 @@ var scoreCalculator = require('./greed_node_modules/scoreCalculator.js');
 
 var http = require("http"),
   httpserv = http.createServer(handleHTTP),
-  port = 8006,
+  port = process.env.OPENSHIFT_NODEJS_PORT || 8006,
   // host = "127.0.0.1",
-  host = "0.0.0.0",
+  host = process.env.OPENSHIFT_NODEJS_IP || "0.0.0.0",
   node_static = require("node-static"),
   static_files = new node_static.Server(__dirname),
   io = require("socket.io").listen(httpserv);
