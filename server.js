@@ -142,7 +142,7 @@ function connection(socket) {
     scoreCalculator.calculateScoresForEachDice(dice);
     var turnScore = scoreCalculator.calculateTurnScore(dice);
 
-    currentPlayer.totalTurnScore = currentPlayer.totalTurnScore - oldTurnScore + turnScore; 
+    currentPlayer.totalTurnScore = currentPlayer.totalTurnScore - oldTurnScore + turnScore;
 
     var diceData = {
       dice: dice,
@@ -203,6 +203,7 @@ function connection(socket) {
     var prevPlayerTotalTurnScore = currentPlayer.totalTurnScore;
     var prevPlayerTotalScore = currentPlayer.totalScore;
     var prevPlayerNumber = currentPlayer.playerNumber;
+    var prevPlayerName = currentPlayer.name;
 
     currentPlayer.totalTurnScore = 0;
 
@@ -225,6 +226,7 @@ function connection(socket) {
       prevPlayerNumber: prevPlayerNumber,
       prevPlayerTotalTurnScore: prevPlayerTotalTurnScore,
       prevPlayerTotalScore: prevPlayerTotalScore,
+      prevPlayerName: prevPlayerName,
       endOfRound: endOfRound,
       round: game.round,
       numberOfPlayers: game.players.length,
