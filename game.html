@@ -445,11 +445,14 @@
     rollScore = diceData.turnScore;
     $('.totalTurnScore').text(diceData.totalTurnScore);
     $('.totalScore').text(diceData.totalScore);
-    if (rollAgainValid(diceData.dice)) {
-      $('.roll').removeClass('disabled');
-    } else {
-      $('.roll').addClass('disabled');
-    }    
+
+    if (diceData.currentPlayerName === name) {
+      if (rollAgainValid(diceData.dice)) {
+        $('.roll').removeClass('disabled');
+      } else {
+        $('.roll').addClass('disabled');
+      }
+    }
   }
 
   function setPlayedDiceOpacity() {
