@@ -100,17 +100,8 @@ function rolled(diceData) {
 
 function loseGo(currentPlayerName) {
   if (currentPlayerName === name) {
-    $('.message').text('Unlucky!');
-    setTimeout(function() {
-      $('.message').text('');
-      socket.emit('endGo');
-    }, 2000);
-  } else {
-    $('.message').text(currentPlayerName + ' scored nothing!');
-    setTimeout(function() {
-      $('.message').text('');
-    }, 2000);
-  }    
+    socket.emit('endGo');
+  }
 }
 
 function rollAgainValid(dice) {
@@ -271,8 +262,16 @@ function nextPlayersTurn(data) {
     $('.message').text(winner + " won!");
     disableButtons();
   } else {
-    prevPlayerName = data.prevPlayerName === name ? "You" : data.prevPlayerName;
-    $('.message').text(prevPlayerName + ' scored ' + data.prevPlayerTotalTurnScore);
+    if (data.prevPlayerTotalTurnScore === 0) {
+      if (data.prevPlayerName === name) {
+        $('.message').text('Unlucky!');
+      } else {
+        $('.message').text(data.prevPlayerName + ' scored nothing!');
+      }
+    } else {
+      prevPlayerName = data.prevPlayerName === name ? "You" : data.prevPlayerName;
+      $('.message').text(prevPlayerName + ' scored ' + data.prevPlayerTotalTurnScore);
+    }
     setTimeout(function() {
       var playerNameText = getPlayerNameText(data.name);
       $('.player-name').text(playerNameText);
