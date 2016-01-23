@@ -34,7 +34,6 @@
       <div class="buttons">
         <div class="roll btn {{disabled}}">Roll</div>
         <div class="endGo btn disabled">End Go</div>
-        <div class="restartGame btn {{disabled}}" style="display: none;">Restart Game</div>
       </div>
 
       <table class="score-table">
@@ -97,7 +96,6 @@
         <div class='select-number-of-players'>Select number of players:</div>
 
         <div class='number-of-players-container'>
-          <div class='number-of-players-button'>1</div>
           <div class='number-of-players-button'>2</div>
           <div class='number-of-players-button'>3</div>
           <div class='number-of-players-button'>4</div>
@@ -108,7 +106,7 @@
     </script>
     <script id="message-template" type="text/x-handlebars-template">
       <div class='container'>
-        <div class='in-progress'>{{message}}</div>
+        <div class='in-progress'>{{{message}}}</div>
       </div>
     </script>
 

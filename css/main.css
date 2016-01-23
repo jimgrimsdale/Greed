@@ -185,3 +185,6 @@ table tbody tr:nth-child(even) {
 .in-progress {
   margin-top: 50px;
 }
+.restartGame {
+  cursor: pointer;
+}

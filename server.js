@@ -56,10 +56,12 @@ var dice = [
   }
 ];
 var currentPlayer;
+var lastRollTimeStamp;
 
 function resetGame() {
   game = undefined;
   resetDice();
+  lastRollTimeStamp = undefined;
 }
 
 function connection(socket) {
@@ -76,7 +78,8 @@ function connection(socket) {
       socket.emit("statusUpdate", "registering");
       return;
     } else {
-      io.sockets.emit("statusUpdate", "inprogress");
+      var minutesSinceLastRoll = !lastRollTimeStamp ? 0 : Math.floor(((Date.now() - lastRollTimeStamp) / 1000) / 60);
+      socket.emit("statusUpdate", "inprogress", null, minutesSinceLastRoll);
     }
     // if(!userId) {
     //   socket.emit("statusUpdate", "game");
@@ -85,7 +88,6 @@ function connection(socket) {
 
   function restartGame() {
     resetGame();
-    getStatus();
   }
 
   function createGame(finalScoreLine, numberOfPlayers) {
@@ -115,6 +117,8 @@ function connection(socket) {
   }
 
   function roll() {
+    lastRollTimeStamp = Date.now();
+
     diceRoller.resetJustRolledAndDeselected(dice);
     diceRoller.checkAllNotInPlay(dice);
     diceRoller.rollDiceInPlay(dice);
@@ -248,7 +252,6 @@ function connection(socket) {
   socket.on("updateScores", updateScores);
   socket.on("restartGame", restartGame);
   socket.on("endGo", endGo);
-
 }
 
 function resetDice() {
