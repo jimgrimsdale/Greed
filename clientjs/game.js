@@ -326,8 +326,9 @@ function disableButtons() {
 
 function setClickHandlers() {
   $('.number-of-players-button').on('click', function() {
-    var numberOfPlayers = parseInt($(this).text(), 10);
-    socket.emit("createGame", numberOfPlayers);
+    var winningScore = parseInt($('#winning-score').val(), 10),
+      numberOfPlayers = parseInt($(this).text(), 10);
+    socket.emit("createGame", winningScore, numberOfPlayers);
   });
 
   $('#name').keypress(function(e){

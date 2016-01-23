@@ -27,6 +27,20 @@ h1 {
   text-align: center;
   margin-top: 30px;
 }
+.winning-score-wrapper {
+  margin-bottom: 25px;
+}
+.winning-score-wrapper label {
+  font-size: 25px;
+}
+#winning-score {
+  background-color: #1F114D;
+  border: none;
+  height: 25px;
+  width: 64px;
+  font-size: 20px;
+  color: white;
+}
 .select-number-of-players {
   font-size: 25px;
   margin-bottom: 10px;
@@ -118,7 +132,6 @@ tr:last-child td:last-child {
   border-bottom-right-radius: 6px;
 }
 table tbody td {
-  color: #FF2D2D;
   padding: 10px;
 }
 table tbody tr:nth-child(odd) {
@@ -168,4 +181,7 @@ table tbody tr:nth-child(even) {
   text-decoration: underline;
   color: blue;
   cursor: pointer;
+}
+.in-progress {
+  margin-top: 50px;
 }

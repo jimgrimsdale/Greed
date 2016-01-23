@@ -88,12 +88,12 @@ function connection(socket) {
     getStatus();
   }
 
-  function createGame(numberOfPlayers) {
+  function createGame(finalScoreLine, numberOfPlayers) {
     game = {
       numberOfPlayers: numberOfPlayers,
       players: [],
       round: 1,
-      finalScoreLine: 500
+      finalScoreLine: finalScoreLine
     };
 
     io.sockets.emit("statusUpdate", "registering");
