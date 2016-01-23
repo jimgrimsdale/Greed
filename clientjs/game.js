@@ -19,6 +19,10 @@ socket.emit("getStatus");
 socket.on("statusUpdate", function(status, game, minutesSinceLastRoll) {
   var template;
 
+  if (status === 'startGame' && !name) {
+    status = "inprogress";
+  }
+
   switch (status) {
     case "createGame":
       var source   = $("#create-game-template").html();
@@ -39,7 +43,7 @@ socket.on("statusUpdate", function(status, game, minutesSinceLastRoll) {
         context;
       template = Handlebars.compile(source);
 
-      if (minutesSinceLastRoll < 5) {
+      if (!minutesSinceLastRoll || minutesSinceLastRoll < 5) {
         context = { message: "Game in progress. Please wait." };
       } else {
         context = { message: "Game in progress. No one has rolled for " + 
@@ -169,7 +173,9 @@ function showWin(diceData) {
     } 
   }
 
-  $('.message').text(strWin);
+  if (strWin) {
+    $('.message').text(strWin);
+  }  
 }
 
 function moreThanOneWin(dice) {
