@@ -81,7 +81,7 @@ socket.on("rolled", rolled);
 
 function rolled(diceData) {
   setPlayedDiceOpacity();
-  removeClickHandlers();
+  removeDiceClickHandlers();
 
   $.when(animate.rollJustRolledDice(diceData.dice)).then(
     function() {
@@ -199,7 +199,7 @@ function updateScores() {
 socket.on('updatedScores', updatedScores);
 
 function updatedScores(diceData) {
-  removeClickHandlers();
+  removeDiceClickHandlers();
   showWin(diceData);
   rollScore = diceData.turnScore;
   $('.totalTurnScore').text(diceData.totalTurnScore);
@@ -235,7 +235,7 @@ function setPlayedDiceOpacity() {
   }
 }
 
-function removeClickHandlers() {
+function removeDiceClickHandlers() {
   for(var i = 0; i < 6; i++) {
     $('#dice' + i).off('click');
     $('#dice' + i).removeClass('selectable');
@@ -254,6 +254,7 @@ socket.on("nextPlayersTurn", nextPlayersTurn);
 
 function nextPlayersTurn(data) {
   var winner, prevPlayerName;
+  removeDiceClickHandlers();
   updateScoreTable(data);
 
   if (data.winner) {
@@ -279,8 +280,6 @@ function nextPlayersTurn(data) {
       if (name === data.name) {
         $('.roll').removeClass("disabled");
         $('.endGo').addClass("disabled");
-      } else {
-        disableButtons();
       }
 
       $('.totalTurnScore').text(0);
