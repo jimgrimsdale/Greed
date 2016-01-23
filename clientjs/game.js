@@ -355,6 +355,7 @@ function setClickHandlers() {
   });
 
   $('.endGo').on('click', function() {
+    disableButtons();
     socket.emit("endGo");
   });
 
