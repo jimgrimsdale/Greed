@@ -16,7 +16,7 @@ var socket = io.connect("/",{
 
 socket.emit("getStatus");
 
-socket.on("statusUpdate", function(status, game, minutesSinceLastRoll) {
+socket.on("statusUpdate", function(status, game, minutesSinceGameCreated) {
   var template;
 
   if (status === 'startGame' && !name) {
@@ -43,12 +43,8 @@ socket.on("statusUpdate", function(status, game, minutesSinceLastRoll) {
         context;
       template = Handlebars.compile(source);
 
-      if (!minutesSinceLastRoll || minutesSinceLastRoll < 5) {
-        context = { message: "Game in progress. Please wait." };
-      } else {
-        context = { message: "Game in progress. No one has rolled for " + 
-          minutesSinceLastRoll + " minutes. Click <span class='restartGame'>here</span> to restart the game."};
-      }
+      context = { message: "Game in progress. The game was created " + 
+        minutesSinceGameCreated + " minutes ago. Click <span class='restartGame'>here</span> to end it and start a new one."};
 
       template = template(context);
       break;

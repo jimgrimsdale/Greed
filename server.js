@@ -56,12 +56,12 @@ var dice = [
   }
 ];
 var currentPlayer;
-var lastRollTimeStamp;
+var gameCreatedTimeStamp;
 
 function resetGame() {
   game = undefined;
   resetDice();
-  lastRollTimeStamp = undefined;
+  gameCreatedTimeStamp = undefined;
 }
 
 function connection(socket) {
@@ -78,8 +78,8 @@ function connection(socket) {
       socket.emit("statusUpdate", "registering");
       return;
     } else {
-      var minutesSinceLastRoll = !lastRollTimeStamp ? 0 : Math.floor(((Date.now() - lastRollTimeStamp) / 1000) / 60);
-      socket.emit("statusUpdate", "inprogress", null, minutesSinceLastRoll);
+      var minutesSinceGameCreated = !gameCreatedTimeStamp ? 0 : Math.floor(((Date.now() - gameCreatedTimeStamp) / 1000) / 60);
+      socket.emit("statusUpdate", "inprogress", null, minutesSinceGameCreated);
     }
     // if(!userId) {
     //   socket.emit("statusUpdate", "game");
@@ -99,6 +99,8 @@ function connection(socket) {
     };
 
     io.sockets.emit("statusUpdate", "registering");
+
+    gameCreatedTimeStamp = Date.now();
   }
 
   function register(data) {
@@ -117,8 +119,6 @@ function connection(socket) {
   }
 
   function roll() {
-    lastRollTimeStamp = Date.now();
-
     diceRoller.resetJustRolledAndDeselected(dice);
     diceRoller.checkAllNotInPlay(dice);
     diceRoller.rollDiceInPlay(dice);
