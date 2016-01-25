@@ -8,5 +8,9 @@
     "start": "node server.js"
   },
   "author": "James Grimsdale",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "socket.io": "^0.9.16",
+    "node-static": "*"
+  }
 }
