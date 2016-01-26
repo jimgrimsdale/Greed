@@ -8,7 +8,7 @@ To run locally:
 
 3) go to localhost:8006/game
 
-The rules of the game can be found here: https://en.wikipedia.org/wiki/Farkle
+Greed is a dice game also known as Farkle and is played by two or more players. The rules of the game can be found here: https://en.wikipedia.org/wiki/Farkle
 
 I have set up three instances of the game at the urls below. Only one game can be played at a time on each server.
 
