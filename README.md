@@ -6,7 +6,7 @@ To run locally:
 
 2) run 'node server.js' or 'npm start'
 
-3) go to 'localhost:8006/game'
+3) go to localhost:8006/game
 
 The rules of the game can be found here: https://en.wikipedia.org/wiki/Farkle
 
