@@ -1,6 +1,6 @@
 # Greed
 
-To run locally: 
+To run locally:  
 
 1) install node modules by running 'npm install'
 2) run 'node server.js' or 'npm start'
