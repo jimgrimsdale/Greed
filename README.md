@@ -24,3 +24,5 @@ Three instances of the game have been set up at the urls below. Only one game ca
 http://nodejs-greedgame.rhcloud.com/game  
 http://nodejs1-greedgame.rhcloud.com/game  
 http://nodejs2-greedgame.rhcloud.com/game  
+
+You can force restart the game by replacing '/game' with '/restartgame'.
